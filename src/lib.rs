@@ -43,6 +43,14 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
     let serializer = get_serializer(attrs, "serde_json");
 
+    let err = quote! {
+        Err(::redis::RedisError::from((
+            ::redis::ErrorKind::TypeError,
+            "Response was of incompatible type",
+            format!("Response type not deserializable. (response was {:?})", v)
+        )))
+    };
+
     quote! {
         impl ::redis::FromRedisValue for #ident {
             fn from_redis_value(v: &::redis::Value) -> ::redis::RedisResult<Self> {
@@ -57,33 +65,17 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
                                     if let Ok(s) = ::#serializer::from_str(ch.as_str()) {
                                         Ok(s)
                                     } else {
-                                        Err(::redis::RedisError::from((
-                                            ::redis::ErrorKind::TypeError,
-                                            "Response was of incompatible type",
-                                            format!("Response type not deserializable. (response was {:?})", v)
-                                        )))
+                                        #err
                                     }
                                 } else {
-                                    Err(::redis::RedisError::from((
-                                        ::redis::ErrorKind::TypeError,
-                                        "Response was of incompatible type",
-                                        format!("Response type not deserializable. (response was {:?})", v)
-                                    )))
+                                    #err
                                 }                                
                             }
                         } else {
-                            Err(::redis::RedisError::from((
-                                ::redis::ErrorKind::TypeError,
-                                "Response was of incompatible type",
-                                format!("Response type not deserializable. (response was {:?})", v)
-                            )))
+                            #err
                         }
                     },
-                    _ => Err(::redis::RedisError::from((
-                        ::redis::ErrorKind::TypeError,
-                        "Response was of incompatible type",
-                        format!("Response type not deserializable. (response was {:?})", v)
-                    ))),
+                    _ => #err,
                 }
             }
         }
