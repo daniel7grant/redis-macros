@@ -16,8 +16,7 @@ struct User {
     addresses: Vec<Address>,
 }
 
-/// Instead of deriving the data, use Json wrappers everywhere
-/// This will make it compatible with any kind of data (for example Vec)
+/// This example shows how to use more exotic RedisJSON commands
 #[tokio::main]
 async fn main() -> RedisResult<()> {
     // Open new connection to localhost
@@ -40,32 +39,42 @@ async fn main() -> RedisResult<()> {
     };
 
     // Wrap the data in `Json(..)` when passing to and from Redis
-    con.json_set("user_wrapped", "$", &Json(&user)).await?;
-    let Json(stored_user): Json<User> = con.json_get("user_wrapped", "$").await?;
-    assert_eq!(user, stored_user);
+    con.json_set("user_wrapped_modify", "$", &user).await?;
 
-    // You can unwrap inner structs as well
-    let Json(stored_address): Json<Address> =
-        con.json_get("user_wrapped", "$.addresses[0]").await?;
-    assert_eq!(user.addresses[0], stored_address);
+    // Modify inner values with JSON.SET
+    con.json_set("user_wrapped_modify", "$.name", &"Bowie")
+        .await?;
+    let Json(stored_name): Json<String> = con.json_get("user_wrapped_modify", "$.name").await?;
+    assert_eq!("Bowie", stored_name);
 
-    // Even with types that redis normally overrides (e.g. String, Vec)
-    let Json(stored_name): Json<String> = con.json_get("user_wrapped", "$.name").await?;
-    assert_eq!(user.name, stored_name);
+    // Increment numbers with JSON.NUMINCRBY
+    con.json_num_incr_by("user_wrapped_modify", "$.id", 1)
+        .await?;
+    let Json(stored_id): Json<u32> = con.json_get("user_wrapped_modify", "$.id").await?;
+    assert_eq!(2, stored_id);
+
+    // Append item to array with JSON.ARR_APPEND
+    con.json_arr_append(
+        "user_wrapped_modify",
+        "$.addresses",
+        &Address::Street("Oxford".to_string()),
+    )
+    .await?;
     let Json(stored_addresses): Json<Vec<Address>> =
-        con.json_get("user_wrapped", "$.addresses").await?;
-    assert_eq!(user.addresses, stored_addresses);
-
-    // You can even use these types as inputs
-    let users = vec![user];
-    con.json_set("users_wrapped", "$", &Json(&users)).await?;
-    let Json(stored_users): Json<Vec<User>> = con.json_get("users_wrapped", "$").await?;
-    assert_eq!(users, stored_users);
+        con.json_get("user_wrapped_modify", "$.addresses").await?;
+    assert_eq!(
+        vec![
+            Address::Street("Downing".to_string()),
+            Address::Road("Abbey".to_string()),
+            Address::Street("Oxford".to_string())
+        ],
+        stored_addresses
+    );
 
     Ok(())
 }
 
 #[test]
-fn test_json_wrapper_redisjson() {
+fn test_json_wrapper_modify() {
     assert_eq!(main(), Ok(()));
 }

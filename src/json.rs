@@ -1,8 +1,8 @@
 use redis::{RedisResult, Value};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::de::DeserializeOwned;
 use serde_json;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Json<T>(pub T);
 
 impl<T> ::redis::FromRedisValue for Json<T>
@@ -51,18 +51,5 @@ where
                 ),
             ))),
         }
-    }
-}
-
-impl<T> ::redis::ToRedisArgs for Json<T>
-where
-    T: Serialize,
-{
-    fn write_redis_args<W>(&self, out: &mut W)
-    where
-        W: ?Sized + ::redis::RedisWrite,
-    {
-        let buf = serde_json::to_string(&self).unwrap();
-        out.write_arg(&buf.as_bytes())
     }
 }
