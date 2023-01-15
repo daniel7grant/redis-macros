@@ -15,4 +15,6 @@ json = ["dep:redis", "dep:serde", "dep:serde_json"]
 macros = ["dep:macros"]
 
 [dev-dependencies]
+redis = { version = "0.22.2", features = ["tokio-comp", "json"] }
 serde_yaml = "0.9.16"
+tokio = { version = "1.24.1", features = ["full"] }
