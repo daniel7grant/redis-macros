@@ -147,3 +147,29 @@ cargo test --examples
 # cleanup the container
 docker stop redis
 ```
+
+## Coverage
+
+For coverage, you can use `grcov`. Simply install `llvm-tools-preview` and `grcov` if you don't have it already:
+
+```sh
+rustup component add llvm-tools-preview
+cargo install grcov
+```
+
+You have to export a few flags to make it work properly:
+
+```sh
+export RUSTFLAGS='-Cinstrument-coverage'
+export LLVM_PROFILE_FILE='.coverage/cargo-test-%p-%m.profraw'
+```
+
+And finally, run the tests and generate the output:
+
+```sh
+cargo test
+cargo test --examples
+grcov .coverage/ -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing -o ./target/debug/coverage/
+```
+
+Now you can open `./target/debug/coverage/index.html`, and view it in the browser to see the coverage.
