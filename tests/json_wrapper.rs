@@ -62,7 +62,7 @@ pub fn it_should_fail_if_the_result_is_not_redis_json() {
     let val = Value::Data("{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}".as_bytes().into());
     let result = Json::<User>::from_redis_value(&val);
     if let Err(err) = result {
-        assert_eq!(err.to_string(), "Response was of incompatible type: Response type not JSON type. (response was string-data('\"{\\\"id\\\":1,\\\"name\\\":\\\"Ziggy\\\",\\\"addresses\\\":[{\\\"Street\\\":\\\"Downing\\\"},{\\\"Road\\\":\\\"Abbey\\\"}]}\"'))".to_string());
+        assert_eq!(err.to_string(), "Response was of incompatible type: Response type was not JSON type. (response was string-data('\"{\\\"id\\\":1,\\\"name\\\":\\\"Ziggy\\\",\\\"addresses\\\":[{\\\"Street\\\":\\\"Downing\\\"},{\\\"Road\\\":\\\"Abbey\\\"}]}\"'))".to_string());
     } else {
         panic!("RedisJSON unwrapping should fail.");
     }
