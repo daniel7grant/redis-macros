@@ -142,8 +142,8 @@ cargo test
 For integration testing, you can run the examples. You will need a RedisJSON compatible redis-server on port 6379, [redis-stack docker image](https://hub.docker.com/r/redis/redis-stack) is recommended:
 
 ```sh
-docker run -d --rm -p 6379:6379 docker.io/redis/redis-stack
+docker run -d --rm -p 6379:6379 --name redis docker.io/redis/redis-stack
 cargo test --examples
-# cleanup
-docker stop
+# cleanup the container
+docker stop redis
 ```
