@@ -36,7 +36,7 @@ where
                         ::redis::ErrorKind::TypeError,
                         "Response was of incompatible type",
                         format!(
-                            "Response type was not valid UTF-8 string. (response was {:?})",
+                            "Response was not valid UTF-8 string. (response was {:?})",
                             v
                         ),
                     )))

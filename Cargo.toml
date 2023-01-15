@@ -6,10 +6,13 @@ edition = "2021"
 [dependencies]
 macros = { path = "./macros", optional = true }
 redis = { version = "0.22.2", optional = true }
-serde = { version = "1.0.152", optional = true }
+serde = { version = "1.0.152", features = ["derive"], optional = true }
 serde_json = { version = "1.0.91", optional = true }
 
 [features]
 default = ["json", "macros"]
 json = ["dep:redis", "dep:serde", "dep:serde_json"]
 macros = ["dep:macros"]
+
+[dev-dependencies]
+serde_yaml = "0.9.16"
