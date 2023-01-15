@@ -1,8 +1,8 @@
 use redis::{RedisResult, Value};
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Json<T>(pub T);
 
 impl<T> ::redis::FromRedisValue for Json<T>
@@ -28,7 +28,7 @@ where
                         Err(::redis::RedisError::from((
                             ::redis::ErrorKind::TypeError,
                             "Response was of incompatible type",
-                            format!("Response type not JSON type. (response was {:?})", v),
+                            format!("Response type was not JSON type. (response was {:?})", v),
                         )))
                     }
                 } else {
@@ -51,5 +51,18 @@ where
                 ),
             ))),
         }
+    }
+}
+
+impl<T> ::redis::ToRedisArgs for Json<T>
+where
+    T: Serialize,
+{
+    fn write_redis_args<W>(&self, out: &mut W)
+    where
+        W: ?Sized + ::redis::RedisWrite,
+    {
+        let buf = serde_json::to_string(&self).unwrap();
+        out.write_arg(&buf.as_bytes())
     }
 }
