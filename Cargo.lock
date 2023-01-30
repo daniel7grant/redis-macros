@@ -287,6 +287,8 @@ dependencies = [
 [[package]]
 name = "redis-macros-derive"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "339384a85cda4cfe1b9426013ede6ab40ff0880adde4a860c26a0640192b83ef"
 dependencies = [
  "proc-macro2",
  "quote",

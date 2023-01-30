@@ -12,7 +12,7 @@ keywords = ["redis", "macro", "derive", "json"]
 
 [dependencies]
 redis = { version = "0.22.2", optional = true }
-redis-macros-derive = { path = "./redis-macros-derive", version = "0.1.0", optional = true }
+redis-macros-derive = { version = "0.1.0", optional = true }
 serde = { version = "1.0.152", features = ["derive"], optional = true }
 serde_json = { version = "1.0.91", optional = true }
 
