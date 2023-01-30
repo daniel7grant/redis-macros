@@ -1,10 +1,10 @@
 #[cfg(feature = "macros")]
-extern crate macros;
+extern crate redis_macros_derive;
 
 #[cfg(feature = "json")]
 mod json;
 
 #[cfg(feature = "macros")]
-pub use macros::{FromRedisValue,ToRedisArgs};
+pub use redis_macros_derive::{FromRedisValue,ToRedisArgs};
 #[cfg(feature = "json")]
 pub use json::Json;

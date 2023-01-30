@@ -1,3 +1,2 @@
-/.coverage
-/target
-/Cargo.lock
+**/.coverage
+**/target

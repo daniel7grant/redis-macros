@@ -1,18 +1,25 @@
 [package]
 name = "redis-macros"
+description = "Simple macros and wrappers to redis-rs to automatically serialize and deserialize structs with serde."
 version = "0.1.0"
 edition = "2021"
+authors = ["Daniel Grant"]
+readme = "README.md"
+homepage = "https://github.com/daniel7grant/redis-macros"
+repository = "https://github.com/daniel7grant/redis-macros"
+license = "MIT"
+keywords = ["redis", "macro", "derive", "json"]
 
 [dependencies]
-macros = { path = "./macros", optional = true }
 redis = { version = "0.22.2", optional = true }
+redis-macros-derive = { path = "./redis-macros-derive", version = "0.1.0", optional = true }
 serde = { version = "1.0.152", features = ["derive"], optional = true }
 serde_json = { version = "1.0.91", optional = true }
 
 [features]
 default = ["json", "macros"]
 json = ["dep:redis", "dep:serde", "dep:serde_json"]
-macros = ["dep:macros"]
+macros = ["dep:redis-macros-derive"]
 
 [dev-dependencies]
 redis = { version = "0.22.2", features = ["tokio-comp", "json"] }
