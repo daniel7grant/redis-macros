@@ -20,34 +20,28 @@ where
                             Err(::redis::RedisError::from((
                                 ::redis::ErrorKind::TypeError,
                                 "Response was of incompatible type",
-                                format!("Response type in JSON was not deserializable. (response was {:?})", v),
+                                format!("Response type in JSON was not deserializable. (response was {v:?})"),
                             )))
                         }
                     } else {
                         Err(::redis::RedisError::from((
                             ::redis::ErrorKind::TypeError,
                             "Response was of incompatible type",
-                            format!("Response type was not JSON type. (response was {:?})", v),
+                            format!("Response type was not JSON type. (response was {v:?})"),
                         )))
                     }
                 } else {
                     Err(::redis::RedisError::from((
                         ::redis::ErrorKind::TypeError,
                         "Response was of incompatible type",
-                        format!(
-                            "Response was not valid UTF-8 string. (response was {:?})",
-                            v
-                        ),
+                        format!("Response was not valid UTF-8 string. (response was {v:?})"),
                     )))
                 }
             }
             _ => Err(::redis::RedisError::from((
                 ::redis::ErrorKind::TypeError,
                 "Response was of incompatible type",
-                format!(
-                    "Response type not RedisJSON deserializable. (response was {:?})",
-                    v
-                ),
+                format!("Response type not RedisJSON deserializable. (response was {v:?})"),
             ))),
         }
     }
