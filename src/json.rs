@@ -1,6 +1,5 @@
 use redis::{RedisResult, Value};
 use serde::de::DeserializeOwned;
-use serde_json;
 
 #[derive(Debug)]
 pub struct Json<T>(pub T);
