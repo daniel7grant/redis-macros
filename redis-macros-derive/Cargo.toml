@@ -1,0 +1,19 @@
+[package]
+name = "redis-macros-derive"
+description = "Derive macros for the redis-macros package"
+version = "0.1.0"
+edition = "2021"
+authors = ["Daniel Grant"]
+readme = "README.md"
+homepage = "https://github.com/daniel7grant/redis-macros"
+repository = "https://github.com/daniel7grant/redis-macros"
+license = "MIT"
+keywords = ["redis", "macro", "derive", "json"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.49"
+quote = "1.0.23"
+syn = { version = "1.0.107" }
