@@ -20,7 +20,7 @@ serde_json = { version = "1.0.91" }
 
 The simplest way to start is to derive `Serialize`, `Deserialize`, `FromRedisValue`, `ToRedisArgs` for any kind of struct... and that's it! You can now get and set these values with regular redis commands:
 
-```rs
+```rust
 use redis::{Client, Commands, RedisResult};
 use redis_macros::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
@@ -65,7 +65,7 @@ For more information, see the [Basic](./examples/derive_basic.rs) or [Async](./e
 
 You can even use it with RedisJSON, to extract separate parts of the object.
 
-```rs
+```rust
 // Use `JsonCommands`
 use redis::{Client, JsonCommands, RedisResult};
 
@@ -85,7 +85,7 @@ For more information, see the [RedisJSON](./examples/derive_redisjson.rs) exampl
 
 One issue you might be facing is that `redis` already has overrides for some types, for example Vec, String and most primitives. For this you have to use the [Json wrapper](#json-wrapper-with-redisjson).
 
-```rs
+```rust
 // This WON'T work
 let stored_addresses: Vec<Address> = con.json_get("user", "$.addresses")?;
 ```
@@ -94,7 +94,7 @@ let stored_addresses: Vec<Address> = con.json_get("user", "$.addresses")?;
 
 To deserialize Vecs and primitive types when using RedisJSON, you cannot use the regular types, because these are non-compatible with RedisJSON. However `redis-macros` exports a useful wrapper struct: `Json`. When using RedisJSON, you can wrap your non-structs return values into this:
 
-```rs
+```rust
 use redis_macros::Json;
 
 // Return type can be wrapped into Json
@@ -107,7 +107,7 @@ let Json(stored_addresses): Json<Vec<Address>> = con.json_get("user", "$.address
 
 If you only use RedisJSON, you can even do away with deriving `FromRedisValue` and `ToRedisArgs`, and use `Json` everywhere.
 
-```rs
+```rust
 #[derive(Serialize, Deserialize)]
 struct User { /* ... */ }
 
@@ -123,7 +123,7 @@ For more information, see the [Json Wrapper](./examples/json_wrapper_basic.rs) a
 
 In case you want to use another serializer, for example `serde_yaml`, you can install it and use the derives, the same way you would. The only difference should be adding an attribute `redis_serializer` under the derive, with the library you want to serialize with. You can use any Serde serializer as long as they support `from_str` and `to_string` methods. For the full list, see: [Serde data formats](https://serde.rs/#data-formats).
 
-```rs
+```rust
 #[derive(Debug, PartialEq, Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 #[redis_serializer(serde_yaml)]
 struct User { /* ... */ }
