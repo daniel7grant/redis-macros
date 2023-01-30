@@ -1,0 +1,26 @@
+on: 
+  push:
+    tags:
+      - v*
+
+name: Publish to crates.io
+
+jobs:
+  check:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: katyo/publish-crates@v2
+        with:
+            path: ./redis-macros-derive
+            registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - uses: katyo/publish-crates@v2
+        with:
+            registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
