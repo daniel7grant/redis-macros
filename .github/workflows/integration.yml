@@ -11,6 +11,8 @@ jobs:
     services:
       redis:
         image: docker.io/redis/redis-stack
+        ports:
+          - 6379:6379
     name: Test examples with ${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
@@ -25,5 +27,3 @@ jobs:
         with:
           command: test
           args: --examples
-        env:
-          REDIS_URL: redis://redis:6379
