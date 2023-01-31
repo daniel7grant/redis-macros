@@ -20,12 +20,16 @@ struct User {
 /// This will make it compatible with any kind of data (for example Vec)
 #[tokio::main]
 async fn main() -> RedisResult<()> {
-    // Open new connection to localhost
-    let client = Client::open("redis://localhost:6379")?;
+    // Open new async connection to localhost
+    let url = std::env::var("REDIS_URL")
+        .ok()
+        .unwrap_or("redis://localhost:6379".to_string());
+    let client = Client::open(url.as_str())?;
     let mut con = client.get_async_connection().await.map_err(|_| {
         RedisError::from((
             ErrorKind::InvalidClientConfig,
-            "Cannot connect to localhost:6379. Try starting a redis-server process or container.",
+            "Connection failed.",
+            format!("Cannot connect to {url}. Try starting a redis-server process or container."),
         ))
     })?;
 
