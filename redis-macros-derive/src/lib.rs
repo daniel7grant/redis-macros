@@ -36,6 +36,43 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
         .into()
 }
 
+/// Derive macro for the redis crate's [`FromRedisValue`](../redis/trait.FromRedisValue.html) trait to allow parsing Redis responses to this type.
+/// 
+/// *NOTE: This trait requires serde's [`Deserialize`](../serde/trait.Deserialize.html) to also be derived (or implemented).*
+/// 
+/// Simply use the `#[derive(FromRedisValue, Deserialize)]` before any structs (or serializable elements).
+/// This allows, when using Redis commands, to set this as the return type and deserialize from JSON automatically, while reading from Redis.
+/// 
+/// ```rust,no_run
+/// # use redis::{Client, Commands, RedisResult};
+/// use redis_macros::{FromRedisValue};
+/// use serde::{Deserialize};
+/// 
+/// #[derive(FromRedisValue, Deserialize)]
+/// struct User { id: u32 }
+///  
+/// # fn main () -> redis::RedisResult<()> {
+/// # let client = redis::Client::open("redis://localhost:6379/")?;
+/// # let mut con = client.get_connection()?;
+/// con.set("user", "{ \"id\": 1 }")?;
+/// let user: User = con.get("user")?;  // => User { id: 1 }
+/// # }
+/// ```
+/// 
+/// If you want to use a different serde format, for example `serde_yaml`, you can set this with the `redis_serializer` attribute.
+/// The only restriction is to have the deserializer implement the `from_str` function.
+///
+/// ```rust,no_run
+/// # use redis::{Client, Commands, RedisResult};
+/// use redis_macros::{FromRedisValue};
+/// use serde::{Deserialize};
+/// 
+/// #[derive(FromRedisValue, Deserialize)]
+/// #[redis_serializer(serde_yaml)]
+/// struct User { id: u32 }
+/// ```
+/// 
+/// For more information see the isomorphic pair of this trait: [ToRedisArgs].
 #[proc_macro_derive(FromRedisValue, attributes(redis_serializer))]
 pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
@@ -109,6 +146,45 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     .into()
 }
 
+/// Derive macro for the redis crate's [`ToRedisArgs`](../redis/trait.ToRedisArgs.html) trait to allow passing the type to Redis commands.
+/// 
+/// *NOTE: This trait requires serde's [`Serialize`](../serde/trait.Serialize.html) to also be derived (or implemented).*
+/// 
+/// ***WARNING: This trait panics if the underlying serialization fails.***
+/// 
+/// Simply use the `#[derive(ToRedisArgs, Serialize)]` before any structs (or serializable elements).
+/// This allows to pass this type to Redis commands like SET. The type will be serialized into JSON automatically while saving to Redis.
+/// 
+/// ```rust,no_run
+/// # use redis::{Client, Commands, RedisResult};
+/// use redis_macros::{ToRedisArgs};
+/// use serde::{Serialize};
+/// 
+/// #[derive(ToRedisArgs, Serialize)]
+/// struct User { id: u32 }
+///  
+/// # fn main () -> redis::RedisResult<()> {
+/// # let client = redis::Client::open("redis://localhost:6379/")?;
+/// # let mut con = client.get_connection()?;
+/// con.set("user", User { id: 1 })?;
+/// let user: String = con.get("user")?;  // => "{ \"id\": 1 }"
+/// # }
+/// ```
+/// 
+/// If you want to use a different serde format, for example `serde_yaml`, you can set this with the `redis_serializer` attribute.
+/// The only restriciton is to have the serializer implement the `to_string` function.
+///
+/// ```rust,no_run
+/// # use redis::{Client, Commands, RedisResult};
+/// use redis_macros::{ToRedisArgs};
+/// use serde::{Serialize};
+/// 
+/// #[derive(ToRedisArgs, Serialize)]
+/// #[redis_serializer(serde_yaml)]
+/// struct User { id: u32 }
+/// ```
+/// 
+/// For more information see the isomorphic pair of this trait: [FromRedisValue].
 #[proc_macro_derive(ToRedisArgs, attributes(redis_serializer))]
 pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
