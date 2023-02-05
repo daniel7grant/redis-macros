@@ -106,7 +106,7 @@
 //! struct: [`Json`]. When using RedisJSON, you can wrap your non-structs return values into this:
 //!
 //! ```rust,no_run
-//! use redis_macros_derive::Json;
+//! use redis_macros::Json;
 //! # use redis::{Client, JsonCommands, RedisResult};
 //! # use redis_macros_derive::{FromRedisValue, ToRedisArgs};
 //! # use serde::{Deserialize, Serialize};
@@ -134,7 +134,8 @@
 //!
 //! ```rust,no_run
 //! # use redis::{Client, JsonCommands, RedisResult};
-//! # use redis_macros_derive::{FromRedisValue, ToRedisArgs,Json};
+//! # use redis_macros::Json;
+//! # use redis_macros_derive::{FromRedisValue, ToRedisArgs};
 //! # use serde::{Deserialize, Serialize};
 //! # #[derive(Serialize, Deserialize, FromRedisValue, ToRedisArgs)]
 //! # enum Address { Street(String), Road(String) }
