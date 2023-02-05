@@ -15,9 +15,10 @@ use serde::de::DeserializeOwned;
 /// # fn main () -> redis::RedisResult<()> {
 /// # let client = redis::Client::open("redis://localhost:6379/")?;
 /// # let mut con = client.get_connection()?;
-/// # con.json_set("user", "$", "{ \"id\": 1 }")?;
+/// # con.json_set("user", "$", &r#"{ "id": 1 }"#)?;
 /// // You have to manually deserialize this and pull from the Vec
 /// let user_id: String = con.json_get("user", "$.id")?;  // => "[1]"
+/// # Ok(())
 /// # }
 /// ```
 /// 
@@ -34,9 +35,10 @@ use serde::de::DeserializeOwned;
 /// # fn main () -> redis::RedisResult<()> {
 /// # let client = redis::Client::open("redis://localhost:6379/")?;
 /// # let mut con = client.get_connection()?;
-/// # con.json_set("user", "$", "{ \"id\": 1 }")?;
+/// # con.json_set("user", "$", &r#"{ "id": 1 }"#)?;
 /// let Json(user_id): Json<u32> = con.json_get("user", "$.id")?;  // => 1
 /// let Json(user): Json<User> = con.json_get("user", "$")?;  // => User { id: 1 }
+/// # Ok(())
 /// # }
 /// ``` 
 /// 

@@ -54,8 +54,9 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
 /// # fn main () -> redis::RedisResult<()> {
 /// # let client = redis::Client::open("redis://localhost:6379/")?;
 /// # let mut con = client.get_connection()?;
-/// con.set("user", "{ \"id\": 1 }")?;
+/// con.set("user", &r#"{ "id": 1 }"#)?;
 /// let user: User = con.get("user")?;  // => User { id: 1 }
+/// # Ok(())
 /// # }
 /// ```
 /// 
@@ -63,7 +64,6 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
 /// The only restriction is to have the deserializer implement the `from_str` function.
 ///
 /// ```rust,no_run
-/// # use redis::{Client, Commands, RedisResult};
 /// use redis_macros::{FromRedisValue};
 /// use serde::{Deserialize};
 /// 
@@ -168,6 +168,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 /// # let mut con = client.get_connection()?;
 /// con.set("user", User { id: 1 })?;
 /// let user: String = con.get("user")?;  // => "{ \"id\": 1 }"
+/// # Ok(())
 /// # }
 /// ```
 /// 
