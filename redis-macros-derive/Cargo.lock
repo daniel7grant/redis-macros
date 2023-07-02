@@ -230,7 +230,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "redis 0.23.0",
  "redis-macros-derive",
