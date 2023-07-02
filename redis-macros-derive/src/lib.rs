@@ -81,8 +81,8 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let serializer_str = format!("{}", serializer);
 
     let failed_parse_error = quote! {
-        Err(::redis::RedisError::from((
-            ::redis::ErrorKind::TypeError,
+        Err(redis::RedisError::from((
+            redis::ErrorKind::TypeError,
             "Response was of incompatible type",
             format!("Response type not deserializable to {} with {}. (response was {:?})", #ident_str, #serializer_str, v)
         )))
@@ -97,8 +97,8 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
             if let Ok(s) = ::#serializer::from_str(ch.as_str()) {
                 Ok(s)
             } else {
-                Err(::redis::RedisError::from((
-                ::redis::ErrorKind::TypeError,
+                Err(redis::RedisError::from((
+                redis::ErrorKind::TypeError,
                 "Response was of incompatible type",
                 format!("Response type not RedisJSON deserializable to {}. (response was {:?})", #ident_str, v)
             )))
@@ -116,10 +116,10 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     };
 
     quote! {
-        impl ::redis::FromRedisValue for #ident {
-            fn from_redis_value(v: &::redis::Value) -> ::redis::RedisResult<Self> {
+        impl redis::FromRedisValue for #ident {
+            fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
                 match *v {
-                    ::redis::Value::Data(ref bytes) => {
+                    redis::Value::Data(ref bytes) => {
                         if let Ok(s) = ::std::str::from_utf8(bytes) {
                             if let Ok(s) = ::#serializer::from_str(s) {
                                 Ok(s)
@@ -127,15 +127,15 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
                                 #failed_parse
                             }
                         } else {
-                            Err(::redis::RedisError::from((
-                                ::redis::ErrorKind::TypeError,
+                            Err(redis::RedisError::from((
+                                redis::ErrorKind::TypeError,
                                 "Response was of incompatible type",
                                 format!("Response was not valid UTF-8 string. (response was {:?})", v)
                             )))
                         }
                     },
-                    _ => Err(::redis::RedisError::from((
-                        ::redis::ErrorKind::TypeError,
+                    _ => Err(redis::RedisError::from((
+                        redis::ErrorKind::TypeError,
                         "Response was of incompatible type",
                         format!("Response type was not deserializable to {}. (response was {:?})", #ident_str, v)
                     ))),
@@ -192,10 +192,10 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
     let serializer = get_serializer(attrs, "serde_json");
 
     quote! {
-        impl ::redis::ToRedisArgs for #ident {
+        impl redis::ToRedisArgs for #ident {
             fn write_redis_args<W>(&self, out: &mut W)
             where
-                W: ?Sized + ::redis::RedisWrite,
+                W: ?Sized + redis::RedisWrite,
             {
                 let buf = ::#serializer::to_string(&self).unwrap();
                 out.write_arg(&buf.as_bytes())

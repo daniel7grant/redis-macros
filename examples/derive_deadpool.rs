@@ -1,8 +1,9 @@
 use deadpool_redis::{
-	// Very important to import inner redis - otherwise macro expansion fails!
-	// redis,
-    redis::{AsyncCommands, RedisResult},
-    Config, Runtime,
+    // Very important to import inner redis - otherwise macro expansion fails!
+    redis,
+    redis::{AsyncCommands, ErrorKind, RedisError, RedisResult},
+    Config,
+    Runtime,
 };
 use redis_macros::{FromRedisValue, ToRedisArgs};
 use serde::{Deserialize, Serialize};
@@ -32,7 +33,12 @@ async fn main() -> RedisResult<()> {
     let cfg = Config::from_url("redis://localhost:6379");
 
     let pool = cfg.create_pool(Some(Runtime::Tokio1)).unwrap();
-    let mut con = pool.get().await.unwrap();
+    let mut con = pool.get().await.map_err(|_| {
+        RedisError::from((
+            ErrorKind::InvalidClientConfig,
+            "Cannot connect to localhost:6379. Try starting a redis-server process or container.",
+        ))
+    })?;
 
     // Define the data you want to store in Redis.
     let user = User {
