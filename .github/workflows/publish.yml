@@ -28,4 +28,5 @@ jobs:
         with:
           path: ./
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          ignore-unpublished-changes: true
 
