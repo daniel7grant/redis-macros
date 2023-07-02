@@ -75,10 +75,12 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
 /// For more information see the isomorphic pair of this trait: [ToRedisArgs].
 #[proc_macro_derive(FromRedisValue, attributes(redis_serializer))]
 pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
-    let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
+    let DeriveInput { ident, attrs, generics, .. } = parse_macro_input!(input as DeriveInput);
     let serializer = get_serializer(attrs, "serde_json");
     let ident_str = format!("{}", ident);
     let serializer_str = format!("{}", serializer);
+
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let failed_parse_error = quote! {
         Err(::redis::RedisError::from((
@@ -116,7 +118,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     };
 
     quote! {
-        impl ::redis::FromRedisValue for #ident {
+        impl #impl_generics ::redis::FromRedisValue for #ident #ty_generics #where_clause {
             fn from_redis_value(v: &::redis::Value) -> ::redis::RedisResult<Self> {
                 match *v {
                     ::redis::Value::Data(ref bytes) => {
@@ -188,11 +190,13 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 /// For more information see the isomorphic pair of this trait: [FromRedisValue].
 #[proc_macro_derive(ToRedisArgs, attributes(redis_serializer))]
 pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
-    let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
+    let DeriveInput { ident, attrs, generics, .. } = parse_macro_input!(input as DeriveInput);
     let serializer = get_serializer(attrs, "serde_json");
 
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
     quote! {
-        impl ::redis::ToRedisArgs for #ident {
+        impl #impl_generics ::redis::ToRedisArgs for #ident #ty_generics #where_clause {
             fn write_redis_args<W>(&self, out: &mut W)
             where
                 W: ?Sized + ::redis::RedisWrite,
