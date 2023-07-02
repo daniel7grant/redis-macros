@@ -131,6 +131,20 @@ struct User { /* ... */ }
 
 For more information, see the [YAML](./examples/derive_yaml.rs) example.
 
+### Using deadpool-redis or other crates
+
+You can still use the macros if you are using a crate that reexports the `redis` traits, for example [deadpool-redis](https://github.com/bikeshedder/deadpool). The only change you have to make is to `use` the reexported `redis` package explicitly:
+
+```rust
+// In the case of deadpool-redis, bring the reexported crate into scope
+use deadpool_redis::redis;
+
+// Or if you are importing multiple things from redis, use redis::self
+use deadpool_redis::{redis::{self, AsyncCommands}, Config, Runtime};
+```
+
+For more information, see the [deadpool-redis](./examples/derive_deadpool.rs) example.
+
 ## Testing
 
 You can run the unit tests on the code with `cargo test`:
