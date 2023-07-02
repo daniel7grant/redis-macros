@@ -17,8 +17,8 @@ jobs:
           toolchain: stable
           override: true
       - name: Hack publish-crates to not fail on paths
-		run: |
-			sed 's/, path = ".*"//' -i Cargo.toml
+        run: |
+          sed 's/, path = ".*"//' -i Cargo.toml
       - uses: katyo/publish-crates@v2
         with:
           path: ./redis-macros-derive
