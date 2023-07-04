@@ -8,7 +8,8 @@ struct Container<T> {
     inner: T,
 }
 
-/// You can use generics with the traits
+/// You can use generics with it, just derive the trait
+/// However generics currently only work with owned types, because FromRedisValue doesn't support lifetimes
 fn main() -> RedisResult<()> {
     // Open new connection to localhost
     let client = Client::open("redis://localhost:6379")?;
@@ -20,13 +21,14 @@ fn main() -> RedisResult<()> {
     })?;
 
     // Define the data you want to store in Redis.
+	// Currently only owned types work (String, but not &str)!
     let container = Container {
-        inner: "contained",
+        inner: "contained".to_string(),
     };
 
     // Set and get back the container in Redis, no problem
     con.set("container", &container)?;
-    let stored_container: Container<&str> = con.get("container")?;
+    let stored_container: Container<String> = con.get("container")?;
 
     // You will get back the same data
     assert_eq!(container, stored_container);

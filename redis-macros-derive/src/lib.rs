@@ -4,7 +4,7 @@ use quote::quote;
 use syn::{
     parenthesized,
     parse::{Parse, ParseStream},
-    parse_macro_input, parse_str, token, Attribute, DeriveInput, GenericParam, Result,
+    parse_macro_input, token, Attribute, DeriveInput, GenericParam, Result,
 };
 
 struct ParseParenthesed {
@@ -85,19 +85,19 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let ident_str = format!("{}", ident);
     let serializer_str = format!("{}", serializer);
 
-    let mut generics_with_lifetime = generics.clone();
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let (_, ty_generics, where_clause) = generics.split_for_impl();
-
-    let lifetime: GenericParam = parse_str("'de").unwrap();
-    generics_with_lifetime.params.push(lifetime.clone());
-
-    let (impl_generics, _, _) = generics_with_lifetime.split_for_impl();
+    let has_types = generics
+        .params
+        .iter()
+        .any(|g| matches!(g, GenericParam::Type(_)));
 
     let where_with_serialize = if let Some(w) = where_clause {
-        quote! { #w, #ident #ty_generics : serde::Deserialize<#lifetime> }
+        quote! { #w, #ident #ty_generics : serde::de::DeserializeOwned }
+    } else if has_types {
+        quote! { where #ident #ty_generics : serde::de::DeserializeOwned }
     } else {
-        quote! { where #ident #ty_generics : serde::Deserialize<#lifetime> }
+        quote! {}
     };
 
     let failed_parse_error = quote! {
@@ -218,10 +218,17 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
 
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
+    let has_types = generics
+        .params
+        .iter()
+        .any(|g| matches!(g, GenericParam::Type(_)));
+
     let where_with_serialize = if let Some(w) = where_clause {
         quote! { #w, #ident #ty_generics : serde::Serialize }
-    } else {
+    } else if has_types {
         quote! { where #ident #ty_generics : serde::Serialize }
+    } else {
+        quote! {}
     };
 
     quote! {
