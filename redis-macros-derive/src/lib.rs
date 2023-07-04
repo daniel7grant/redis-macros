@@ -4,7 +4,7 @@ use quote::quote;
 use syn::{
     parenthesized,
     parse::{Parse, ParseStream},
-    parse_macro_input, token, Attribute, DeriveInput, Result,
+    parse_macro_input, parse_str, token, Attribute, DeriveInput, GenericParam, Result,
 };
 
 struct ParseParenthesed {
@@ -85,12 +85,19 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let ident_str = format!("{}", ident);
     let serializer_str = format!("{}", serializer);
 
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    let mut generics_with_lifetime = generics.clone();
+
+    let (_, ty_generics, where_clause) = generics.split_for_impl();
+
+    let lifetime: GenericParam = parse_str("'de").unwrap();
+    generics_with_lifetime.params.push(lifetime.clone());
+
+    let (impl_generics, _, _) = generics_with_lifetime.split_for_impl();
 
     let where_with_serialize = if let Some(w) = where_clause {
-        quote! { #w, #ident #ty_generics : serde::de::DeserializeOwned }
+        quote! { #w, #ident #ty_generics : serde::Deserialize<#lifetime> }
     } else {
-        quote! { where #ident #ty_generics : serde::de::DeserializeOwned }
+        quote! { where #ident #ty_generics : serde::Deserialize<#lifetime> }
     };
 
     let failed_parse_error = quote! {
@@ -107,7 +114,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let redis_json_hack = quote! {
         let mut ch = s.chars();
         if ch.next() == Some('[') && ch.next_back() == Some(']') {
-            if let Ok(s) = ::#serializer::from_str(ch.as_str()) {
+            if let Ok(s) = #serializer::from_str(ch.as_str()) {
                 Ok(s)
             } else {
                 Err(redis::RedisError::from((
@@ -133,8 +140,8 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
             fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
                 match *v {
                     redis::Value::Data(ref bytes) => {
-                        if let Ok(s) = ::std::str::from_utf8(bytes) {
-                            if let Ok(s) = ::#serializer::from_str(s) {
+                        if let Ok(s) = std::str::from_utf8(bytes) {
+                            if let Ok(s) = #serializer::from_str(s) {
                                 Ok(s)
                             } else {
                                 #failed_parse

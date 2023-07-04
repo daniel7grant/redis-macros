@@ -8,8 +8,7 @@ struct Container<T> {
     inner: T,
 }
 
-/// Show a simple usage of redis_macros traits
-/// Just derive the traits and forget them!
+/// You can use generics with the traits
 fn main() -> RedisResult<()> {
     // Open new connection to localhost
     let client = Client::open("redis://localhost:6379")?;
@@ -22,15 +21,15 @@ fn main() -> RedisResult<()> {
 
     // Define the data you want to store in Redis.
     let container = Container {
-        inner: "contained".to_string(),
+        inner: "contained",
     };
 
     // Set and get back the container in Redis, no problem
     con.set("container", &container)?;
-    // let stored_container: Container<String> = con.get("container")?;
+    let stored_container: Container<&str> = con.get("container")?;
 
     // You will get back the same data
-    // assert_eq!(container, stored_container);
+    assert_eq!(container, stored_container);
 
     Ok(())
 }
