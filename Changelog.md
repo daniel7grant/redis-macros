@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2023-07-05
+
+### Added
+
+- Support for generic structures
+
 ## [0.2.0] - 2023-07-02
 
 ### Changed
