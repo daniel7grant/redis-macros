@@ -4,7 +4,7 @@ use quote::quote;
 use syn::{
     parenthesized,
     parse::{Parse, ParseStream},
-    parse_macro_input, token, Attribute, DeriveInput, Result,
+    parse_macro_input, token, Attribute, DeriveInput, GenericParam, Result,
 };
 
 struct ParseParenthesed {
@@ -37,17 +37,17 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
 }
 
 /// Derive macro for the redis crate's [`FromRedisValue`](../redis/trait.FromRedisValue.html) trait to allow parsing Redis responses to this type.
-/// 
+///
 /// *NOTE: This trait requires serde's [`Deserialize`](../serde/trait.Deserialize.html) to also be derived (or implemented).*
-/// 
+///
 /// Simply use the `#[derive(FromRedisValue, Deserialize)]` before any structs (or serializable elements).
 /// This allows, when using Redis commands, to set this as the return type and deserialize from JSON automatically, while reading from Redis.
-/// 
+///
 /// ```rust,no_run
 /// # use redis::{Client, Commands, RedisResult};
 /// use redis_macros::{FromRedisValue};
 /// use serde::{Deserialize};
-/// 
+///
 /// #[derive(FromRedisValue, Deserialize)]
 /// struct User { id: u32 }
 ///  
@@ -59,26 +59,46 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
 /// # Ok(())
 /// # }
 /// ```
-/// 
+///
 /// If you want to use a different serde format, for example `serde_yaml`, you can set this with the `redis_serializer` attribute.
 /// The only restriction is to have the deserializer implement the `from_str` function.
 ///
 /// ```rust,no_run
 /// use redis_macros::{FromRedisValue};
 /// use serde::{Deserialize};
-/// 
+///
 /// #[derive(FromRedisValue, Deserialize)]
 /// #[redis_serializer(serde_yaml)]
 /// struct User { id: u32 }
 /// ```
-/// 
+///
 /// For more information see the isomorphic pair of this trait: [ToRedisArgs].
 #[proc_macro_derive(FromRedisValue, attributes(redis_serializer))]
 pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
-    let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
+    let DeriveInput {
+        ident,
+        attrs,
+        generics,
+        ..
+    } = parse_macro_input!(input as DeriveInput);
     let serializer = get_serializer(attrs, "serde_json");
     let ident_str = format!("{}", ident);
     let serializer_str = format!("{}", serializer);
+
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let has_types = generics
+        .params
+        .iter()
+        .any(|g| matches!(g, GenericParam::Type(_)));
+
+    let where_with_serialize = if let Some(w) = where_clause {
+        quote! { #w, #ident #ty_generics : serde::de::DeserializeOwned }
+    } else if has_types {
+        quote! { where #ident #ty_generics : serde::de::DeserializeOwned }
+    } else {
+        quote! {}
+    };
 
     let failed_parse_error = quote! {
         Err(redis::RedisError::from((
@@ -94,7 +114,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     let redis_json_hack = quote! {
         let mut ch = s.chars();
         if ch.next() == Some('[') && ch.next_back() == Some(']') {
-            if let Ok(s) = ::#serializer::from_str(ch.as_str()) {
+            if let Ok(s) = #serializer::from_str(ch.as_str()) {
                 Ok(s)
             } else {
                 Err(redis::RedisError::from((
@@ -116,12 +136,12 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     };
 
     quote! {
-        impl redis::FromRedisValue for #ident {
+        impl #impl_generics redis::FromRedisValue for #ident #ty_generics #where_with_serialize {
             fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
                 match *v {
                     redis::Value::Data(ref bytes) => {
-                        if let Ok(s) = ::std::str::from_utf8(bytes) {
-                            if let Ok(s) = ::#serializer::from_str(s) {
+                        if let Ok(s) = std::str::from_utf8(bytes) {
+                            if let Ok(s) = #serializer::from_str(s) {
                                 Ok(s)
                             } else {
                                 #failed_parse
@@ -147,19 +167,19 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 }
 
 /// Derive macro for the redis crate's [`ToRedisArgs`](../redis/trait.ToRedisArgs.html) trait to allow passing the type to Redis commands.
-/// 
+///
 /// *NOTE: This trait requires serde's [`Serialize`](../serde/trait.Serialize.html) to also be derived (or implemented).*
-/// 
+///
 /// ***WARNING: This trait panics if the underlying serialization fails.***
-/// 
+///
 /// Simply use the `#[derive(ToRedisArgs, Serialize)]` before any structs (or serializable elements).
 /// This allows to pass this type to Redis commands like SET. The type will be serialized into JSON automatically while saving to Redis.
-/// 
+///
 /// ```rust,no_run
 /// # use redis::{Client, Commands, RedisResult};
 /// use redis_macros::{ToRedisArgs};
 /// use serde::{Serialize};
-/// 
+///
 /// #[derive(ToRedisArgs, Serialize)]
 /// struct User { id: u32 }
 ///  
@@ -171,7 +191,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 /// # Ok(())
 /// # }
 /// ```
-/// 
+///
 /// If you want to use a different serde format, for example `serde_yaml`, you can set this with the `redis_serializer` attribute.
 /// The only restriciton is to have the serializer implement the `to_string` function.
 ///
@@ -179,25 +199,45 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 /// # use redis::{Client, Commands, RedisResult};
 /// use redis_macros::{ToRedisArgs};
 /// use serde::{Serialize};
-/// 
+///
 /// #[derive(ToRedisArgs, Serialize)]
 /// #[redis_serializer(serde_yaml)]
 /// struct User { id: u32 }
 /// ```
-/// 
+///
 /// For more information see the isomorphic pair of this trait: [FromRedisValue].
 #[proc_macro_derive(ToRedisArgs, attributes(redis_serializer))]
 pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
-    let DeriveInput { ident, attrs, .. } = parse_macro_input!(input as DeriveInput);
+    let DeriveInput {
+        ident,
+        attrs,
+        generics,
+        ..
+    } = parse_macro_input!(input as DeriveInput);
     let serializer = get_serializer(attrs, "serde_json");
 
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let has_types = generics
+        .params
+        .iter()
+        .any(|g| matches!(g, GenericParam::Type(_)));
+
+    let where_with_serialize = if let Some(w) = where_clause {
+        quote! { #w, #ident #ty_generics : serde::Serialize }
+    } else if has_types {
+        quote! { where #ident #ty_generics : serde::Serialize }
+    } else {
+        quote! {}
+    };
+
     quote! {
-        impl redis::ToRedisArgs for #ident {
+        impl #impl_generics redis::ToRedisArgs for #ident #ty_generics #where_with_serialize {
             fn write_redis_args<W>(&self, out: &mut W)
             where
                 W: ?Sized + redis::RedisWrite,
             {
-                let buf = ::#serializer::to_string(&self).unwrap();
+                let buf = #serializer::to_string(&self).unwrap();
                 out.write_arg(&buf.as_bytes())
             }
         }
