@@ -16,14 +16,10 @@ jobs:
     name: Test examples with ${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
           profile: minimal
           toolchain: ${{ matrix.version }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --examples
+      - run: cargo test --examples
