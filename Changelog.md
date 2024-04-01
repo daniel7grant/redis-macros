@@ -4,7 +4,7 @@
 
 ### Updated
 
-- Updated dependencies
+- Update dependencies (by @negezor)
 
 ## [0.2.1] - 2023-07-05
 
