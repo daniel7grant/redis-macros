@@ -8,10 +8,10 @@ To install it, simply add the package `redis-macros`. This package is a helper f
 
 ```toml
 [dependencies]
-redis-macros = "0.1.0"
-redis = { version = "0.22.2" }
-serde = { version = "1.0.152", features = ["derive"] }
-serde_json = { version = "1.0.91" }
+redis-macros = "0.2.1"
+redis = { version = "0.25.2" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
 ```
 
 ## Basic usage

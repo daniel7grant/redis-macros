@@ -25,7 +25,7 @@ struct User {
 async fn main() -> RedisResult<()> {
     // Open new async connection to localhost
     let client = Client::open("redis://localhost:6379")?;
-    let mut con = client.get_async_connection().await.map_err(|_| {
+    let mut con = client.get_multiplexed_async_connection().await.map_err(|_| {
         RedisError::from((
             ErrorKind::InvalidClientConfig,
             "Cannot connect to localhost:6379. Try starting a redis-server process or container.",

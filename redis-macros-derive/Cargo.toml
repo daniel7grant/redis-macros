@@ -19,8 +19,8 @@ quote = "1.0"
 syn = { version = "2.0" }
 
 [dev-dependencies]
-redis = { version = "0.22.2", features = ["tokio-comp", "json"] }
+redis = { version = "0.25", features = ["tokio-comp", "json"] }
 redis-macros = { path = ".." }
-serde = { version = "1.0.152", features = ["derive"] }
-serde_json = { version = "1.0.91" }
-serde_yaml = "0.9.16"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+serde_yaml = "0.9"
