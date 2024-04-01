@@ -5,6 +5,9 @@ on:
 
 name: Publish to crates.io
 
+permissions:
+    contents: write
+
 jobs:
   check:
     name: Publish to crates.io
@@ -27,4 +30,8 @@ jobs:
           path: ./
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           args: --allow-dirty
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: Changelog.md
+          token: ${{ secrets.GITHUB_TOKEN }}
 
