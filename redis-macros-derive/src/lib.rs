@@ -1,39 +1,22 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
-use quote::quote;
-use syn::{
-    parenthesized,
-    parse::{Parse, ParseStream},
-    parse_macro_input, token, Attribute, DeriveInput, GenericParam, Result,
-};
-
-struct ParseParenthesed {
-    _p: token::Paren,
-    field: TokenStream2,
-}
-
-impl Parse for ParseParenthesed {
-    fn parse(input: ParseStream) -> Result<Self> {
-        let content;
-        Ok(ParseParenthesed {
-            _p: parenthesized!(content in input),
-            field: content.parse()?,
-        })
-    }
-}
+use quote::{quote, ToTokens};
+use syn::{parse_macro_input, Attribute, DeriveInput, Expr, GenericParam};
 
 fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
     let default_token = default.parse::<TokenStream2>().unwrap();
+
     attrs
         .into_iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "redis_serializer")
-        .map(|Attribute { tokens, .. }| {
-            let tokens = tokens.into();
-            let ParseParenthesed { field, .. } = parse_macro_input!(tokens as ParseParenthesed);
-            field.into()
+        .find(|attr| attr.path().is_ident("redis_serializer"))
+        .and_then(|attr| {
+            let Ok(Expr::Path(path)) = attr.parse_args::<Expr>() else {
+                return None;
+            };
+
+            Some(TokenStream2::from(path.to_token_stream()))
         })
         .unwrap_or(default_token.into())
-        .into()
 }
 
 /// Derive macro for the redis crate's [`FromRedisValue`](../redis/trait.FromRedisValue.html) trait to allow parsing Redis responses to this type.
