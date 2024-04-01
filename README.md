@@ -8,7 +8,7 @@ To install it, simply add the package `redis-macros`. This package is a helper f
 
 ```toml
 [dependencies]
-redis-macros = "0.2.1"
+redis-macros = "0.3.0"
 redis = { version = "0.25.2" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
