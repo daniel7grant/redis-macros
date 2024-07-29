@@ -96,8 +96,7 @@ dependencies = [
 [[package]]
 name = "deadpool"
 version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6541a3916932fe57768d4be0b1ffb5ec7cbf74ca8c903fdfd5c0fe8aa958f0ed"
+source = "git+https://github.com/bikeshedder/deadpool.git?branch=master#6c361a306059bc8b0d3426515991e253015af6be"
 dependencies = [
  "deadpool-runtime",
  "num_cpus",
@@ -107,18 +106,16 @@ dependencies = [
 [[package]]
 name = "deadpool-redis"
 version = "0.15.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ff315fab2a7a42132352909afc81140d06b8bbfd1414b098ce278e3f95dd1b9"
+source = "git+https://github.com/bikeshedder/deadpool.git?branch=master#6c361a306059bc8b0d3426515991e253015af6be"
 dependencies = [
  "deadpool",
- "redis 0.25.3",
+ "redis",
 ]
 
 [[package]]
 name = "deadpool-runtime"
 version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b"
+source = "git+https://github.com/bikeshedder/deadpool.git?branch=master#6c361a306059bc8b0d3426515991e253015af6be"
 dependencies = [
  "tokio",
 ]
@@ -363,25 +360,6 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.25.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6472825949c09872e8f2c50bde59fcefc17748b6be5c90fd67cd8b4daca73bfd"
-dependencies = [
- "async-trait",
- "bytes",
- "combine",
- "futures-util",
- "itoa",
- "percent-encoding",
- "pin-project-lite",
- "ryu",
- "tokio",
- "tokio-util",
- "url",
-]
-
-[[package]]
-name = "redis"
 version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8cc5b667390cb038bc65fc4b18c06e2550469f7e06a02d886f1a018a11f63563"
@@ -410,7 +388,7 @@ name = "redis-macros"
 version = "0.4.0"
 dependencies = [
  "deadpool-redis",
- "redis 0.26.0",
+ "redis",
  "redis-macros-derive",
  "serde",
  "serde_json",
