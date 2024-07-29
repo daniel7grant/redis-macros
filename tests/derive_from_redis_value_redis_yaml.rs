@@ -27,7 +27,7 @@ pub fn it_should_implement_the_from_redis_value_trait_with_redis_yaml() {
         ],
     };
 
-    let val = Value::Data(
+    let val = Value::BulkString(
         "id: 1
 name: Ziggy
 addresses:

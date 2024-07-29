@@ -122,7 +122,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
         impl #impl_generics redis::FromRedisValue for #ident #ty_generics #where_with_serialize {
             fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
                 match *v {
-                    redis::Value::Data(ref bytes) => {
+                    redis::Value::BulkString(ref bytes) => {
                         if let Ok(s) = std::str::from_utf8(bytes) {
                             if let Ok(s) = #serializer::from_str(s) {
                                 Ok(s)

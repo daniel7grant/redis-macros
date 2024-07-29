@@ -26,7 +26,7 @@ pub fn it_should_implement_the_from_redis_value_trait() {
         ],
     };
 
-    let val = Value::Data("{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}".as_bytes().into());
+    let val = Value::BulkString("{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}".as_bytes().into());
     let result = User::from_redis_value(&val);
     assert_eq!(result, Ok(user));
 }
@@ -42,17 +42,17 @@ pub fn it_should_also_deserialize_if_the_input_is_in_brackets() {
         ],
     };
 
-    let val = Value::Data("[{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}]".as_bytes().into());
+    let val = Value::BulkString("[{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}]".as_bytes().into());
     let result = User::from_redis_value(&val);
     assert_eq!(result, Ok(user));
 }
 
 #[test]
 pub fn it_should_fail_if_input_is_not_compatible_with_type() {
-    let val = Value::Data("{}".as_bytes().into());
+    let val = Value::BulkString("{}".as_bytes().into());
     let result = User::from_redis_value(&val);
     if let Err(err) = result {
-        assert_eq!(err.to_string(), "Response was of incompatible type - TypeError: Response type not deserializable to User with serde_json. (response was string-data('\"{}\"'))".to_string());
+        assert_eq!(err.to_string(), "Response was of incompatible type - TypeError: Response type not deserializable to User with serde_json. (response was bulk-string('\"{}\"'))".to_string());
     } else {
         panic!("Deserialization should fail.");
     }
@@ -60,7 +60,7 @@ pub fn it_should_fail_if_input_is_not_compatible_with_type() {
 
 #[test]
 pub fn it_should_fail_if_input_is_not_valid_utf8() {
-    let val = Value::Data(vec![0, 159, 146, 150]); // Some invalid utf8
+    let val = Value::BulkString(vec![0, 159, 146, 150]); // Some invalid utf8
     let result = User::from_redis_value(&val);
     if let Err(err) = result {
         assert_eq!(err.to_string(), "Response was of incompatible type - TypeError: Response was not valid UTF-8 string. (response was binary-data([0, 159, 146, 150]))".to_string());

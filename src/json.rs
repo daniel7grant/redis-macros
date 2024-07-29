@@ -58,7 +58,7 @@ where
 {
     fn from_redis_value(v: &Value) -> RedisResult<Self> {
         match *v {
-            Value::Data(ref bytes) => {
+            Value::BulkString(ref bytes) => {
                 if let Ok(s) = ::std::str::from_utf8(bytes) {
                     let mut ch = s.chars();
                     if ch.next() == Some('[') && ch.next_back() == Some(']') {

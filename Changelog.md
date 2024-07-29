@@ -1,5 +1,14 @@
 # Changelog
 
+
+## [0.4.0] - 2024-07-29
+
+### Updated
+
+- Update to redis 0.26 (by @kristoferb)
+- Need to remove support for deadpool redis??
+
+
 ## [0.3.0] - 2024-04-01
 
 ### Updated
