@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.0] - 2024-07-29
+
+### Updated
+
+- Update for new redis-rs (by @kristoferb)
+    - Update redis to 0.26
+    - Update deadpool-redis to 0.16
+- Update versions on other crates
+
 ## [0.3.0] - 2024-04-01
 
 ### Updated
