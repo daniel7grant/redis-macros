@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.2] - 2024-09-15
+
+### Updated
+
+- Change dependency version to be fixed for minor versions
+
 ## [0.4.1] - 2024-09-13
 
 ### Updated
