@@ -12,7 +12,7 @@ keywords = ["redis", "macro", "derive", "json"]
 
 [dependencies]
 deadpool-redis = "0.17.0"
-redis = { version = "0.27.0", optional = true }
+redis = { version = "0.27.2", optional = true }
 redis-macros-derive = { version = "0.4.0", optional = true, path = "./redis-macros-derive" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
@@ -24,6 +24,6 @@ macros = ["dep:redis-macros-derive"]
 
 [dev-dependencies]
 deadpool-redis = { version = "0.17.0" }
-redis = { version = "0.27.0", features = ["tokio-comp", "json"] }
+redis = { version = "0.27.2", features = ["tokio-comp", "json"] }
 serde_yaml = "0.9"
 tokio = { version = "1.38", features = ["full"] }
