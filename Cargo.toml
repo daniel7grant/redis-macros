@@ -11,7 +11,6 @@ license = "MIT"
 keywords = ["redis", "macro", "derive", "json"]
 
 [dependencies]
-deadpool-redis = "0.17"
 redis = { version = "0.27", optional = true }
 redis-macros-derive = { version = "0.4.2", optional = true, path = "./redis-macros-derive" }
 serde = { version = "1.0", features = ["derive"], optional = true }
