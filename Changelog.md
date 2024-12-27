@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.4.3] - 2024-12-27
+
+### Updated
+
+- Update dependencies to fix issue with punycode parsing in idna
+
 ## [0.4.2] - 2024-09-15
 
 ### Updated
