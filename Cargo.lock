@@ -105,7 +105,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfae6799b68a735270e4344ee3e834365f707c72da09c9a8bb89b45cc3351395"
 dependencies = [
  "deadpool",
- "redis",
+ "redis 0.27.6",
 ]
 
 [[package]]
@@ -178,6 +178,7 @@ dependencies = [
  "futures-task",
  "pin-project-lite",
  "pin-utils",
+ "slab",
 ]
 
 [[package]]
@@ -533,6 +534,26 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "ryu",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "redis"
+version = "0.28.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f89727cba9cec05cc579942321ff6dd09fe57a8b3217f52f952301efa010da5"
+dependencies = [
+ "arc-swap",
+ "bytes",
+ "combine",
+ "futures-util",
+ "itoa",
+ "num-bigint",
+ "percent-encoding",
+ "pin-project-lite",
+ "ryu",
  "serde",
  "serde_json",
  "sha1_smol",
@@ -544,10 +565,10 @@ dependencies = [
 
 [[package]]
 name = "redis-macros"
-version = "0.4.2"
+version = "0.4.3"
 dependencies = [
  "deadpool-redis",
- "redis",
+ "redis 0.28.1",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -557,7 +578,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros-derive"
-version = "0.4.2"
+version = "0.4.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -593,18 +614,18 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "serde"
-version = "1.0.216"
+version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b9781016e935a97e8beecf0c933758c97a5520d32930e460142b4cd80c6338e"
+checksum = "02fc4265df13d6fa1d00ecff087228cc0a2b5f3c0e87e258d8b94a156e984c70"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.216"
+version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46f859dbbf73865c6627ed570e78961cd3ac92407a2d117204c49232485da55e"
+checksum = "5a9bf7cf98d04a2b28aead066b7496853d4779c9cc183c440dbac457641e19a0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -649,6 +670,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9e9e0b4211b72e7b8b6e85c807d36c212bdb33ea8587f7569562a84df5465b1"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "slab"
+version = "0.4.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f92a496fb766b417c996b9c5e57daf2f7ad3b0bebe1ccfca4856390e3d3bb67"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]
