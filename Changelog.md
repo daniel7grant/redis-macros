@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-01-21
+
 ### Updated
 
 - Update dependencies to support Redis 0.28
