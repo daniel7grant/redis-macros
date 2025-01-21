@@ -51,7 +51,7 @@ async fn main() -> RedisResult<()> {
     };
 
     // Set and get back the user in Redis asynchronously, no problem
-    con.set("user_deadpool", &user).await?;
+    let _: () = con.set("user_deadpool", &user).await?;
     let stored_user: User = con.get("user_deadpool").await?;
 
     // You will get back the same data

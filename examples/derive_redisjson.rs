@@ -42,7 +42,7 @@ async fn main() -> RedisResult<()> {
     };
 
     // Set and get the data in Redis with RedisJSON
-    con.json_set("user_json", "$", &user).await?;
+    let _: () = con.json_set("user_json", "$", &user).await?;
     let stored_user: User = con.json_get("user_json", "$").await?;
     assert_eq!(user, stored_user);
 

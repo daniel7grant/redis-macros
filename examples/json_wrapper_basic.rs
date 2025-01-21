@@ -40,7 +40,7 @@ async fn main() -> RedisResult<()> {
     };
 
     // Wrap the data in `Json(..)` when reading from from Redis
-    con.json_set("user_wrapped", "$", &user).await?;
+    let _: () = con.json_set("user_wrapped", "$", &user).await?;
     let Json(stored_user): Json<User> = con.json_get("user_wrapped", "$").await?;
     assert_eq!(user, stored_user);
 
@@ -58,7 +58,7 @@ async fn main() -> RedisResult<()> {
 
     // You can even use these types as inputs
     let users = vec![user];
-    con.json_set("users_wrapped", "$", &users).await?;
+    let _: () = con.json_set("users_wrapped", "$", &users).await?;
     let Json(stored_users): Json<Vec<User>> = con.json_get("users_wrapped", "$").await?;
     assert_eq!(users, stored_users);
 

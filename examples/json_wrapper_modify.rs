@@ -39,22 +39,22 @@ async fn main() -> RedisResult<()> {
     };
 
     // Wrap the data in `Json(..)` when passing to and from Redis
-    con.json_set("user_wrapped_modify", "$", &user).await?;
+    let _: () = con.json_set("user_wrapped_modify", "$", &user).await?;
 
     // Modify inner values with JSON.SET
-    con.json_set("user_wrapped_modify", "$.name", &"Bowie")
+    let _: () = con.json_set("user_wrapped_modify", "$.name", &"Bowie")
         .await?;
     let Json(stored_name): Json<String> = con.json_get("user_wrapped_modify", "$.name").await?;
     assert_eq!("Bowie", stored_name);
 
     // Increment numbers with JSON.NUMINCRBY
-    con.json_num_incr_by("user_wrapped_modify", "$.id", 1)
+    let _: () = con.json_num_incr_by("user_wrapped_modify", "$.id", 1)
         .await?;
     let Json(stored_id): Json<u32> = con.json_get("user_wrapped_modify", "$.id").await?;
     assert_eq!(2, stored_id);
 
     // Append item to array with JSON.ARR_APPEND
-    con.json_arr_append(
+    let _: () = con.json_arr_append(
         "user_wrapped_modify",
         "$.addresses",
         &Address::Street("Oxford".to_string()),

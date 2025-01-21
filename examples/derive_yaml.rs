@@ -43,7 +43,7 @@ async fn main() -> RedisResult<()> {
     };
 
     // Set and get back the user in YAML format, no problem
-    con.set("user_yaml", &user).await?;
+    let _: () = con.set("user_yaml", &user).await?;
     let stored_user: User = con.get("user_yaml").await?;
     assert_eq!(user, stored_user);
 

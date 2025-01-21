@@ -43,7 +43,7 @@ async fn main() -> RedisResult<()> {
     };
 
     // Set and get back the user in Redis asynchronously, no problem
-    con.set("user_async", &user).await?;
+    let _: () = con.set("user_async", &user).await?;
     let stored_user: User = con.get("user_async").await?;
 
     // You will get back the same data

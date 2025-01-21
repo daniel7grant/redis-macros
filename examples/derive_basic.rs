@@ -42,7 +42,7 @@ fn main() -> RedisResult<()> {
     };
 
     // Set and get back the user in Redis, no problem
-    con.set("user", &user)?;
+    let _: () = con.set("user", &user)?;
     let stored_user: User = con.get("user")?;
 
     // You will get back the same data

@@ -27,7 +27,7 @@ fn main() -> RedisResult<()> {
     };
 
     // Set and get back the container in Redis, no problem
-    con.set("container", &container)?;
+    con.set::<_, _, ()>("container", &container)?;
     let stored_container: Container<String> = con.get("container")?;
 
     // You will get back the same data

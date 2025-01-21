@@ -14,9 +14,9 @@ fn get_serializer(attrs: Vec<Attribute>, default: &str) -> TokenStream2 {
                 return None;
             };
 
-            Some(TokenStream2::from(path.to_token_stream()))
+            Some(path.to_token_stream())
         })
-        .unwrap_or(default_token.into())
+        .unwrap_or(default_token)
 }
 
 /// Derive macro for the redis crate's [`FromRedisValue`](../redis/trait.FromRedisValue.html) trait to allow parsing Redis responses to this type.
