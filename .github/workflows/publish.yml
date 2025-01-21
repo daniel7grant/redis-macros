@@ -26,6 +26,7 @@ jobs:
           path: ./redis-macros-derive
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           ignore-unpublished-changes: true
+          args: --allow-dirty
       - uses: katyo/publish-crates@v2
         with:
           path: ./
