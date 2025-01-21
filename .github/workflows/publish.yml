@@ -20,6 +20,7 @@ jobs:
       - name: Hack publish-crates to not fail on paths
         run: |
           sed 's/, path = ".*"//' -i Cargo.toml
+          sed '/redis-macros = { path = ".." }/d' -i redis-macros-derive/Cargo.toml
       - uses: katyo/publish-crates@v2
         with:
           path: ./redis-macros-derive
