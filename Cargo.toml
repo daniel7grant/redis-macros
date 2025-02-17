@@ -22,7 +22,7 @@ json = ["dep:redis", "dep:serde", "dep:serde_json"]
 macros = ["dep:redis-macros-derive"]
 
 [dev-dependencies]
-deadpool-redis = { version = "0.18" }
+deadpool-redis = { version = "0.19" }
 redis = { version = "0.28", features = ["tokio-comp", "json"] }
 serde_yaml = "0.9"
 tokio = { version = "1.41", features = ["full"] }
