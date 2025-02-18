@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.5.1]
+
 ### Updated
 
 - Update dependencies to support Redis 0.29
