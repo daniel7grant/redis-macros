@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.5.2]
+
+### Updated
+
+- Update deadpool-redis and move to dev dependencies (by @negezor)
+
 ## [0.5.1]
 
 ### Updated
