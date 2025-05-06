@@ -539,7 +539,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "deadpool-redis",
  "redis 0.30.0",
@@ -552,7 +552,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros-derive"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "proc-macro2",
  "quote",
