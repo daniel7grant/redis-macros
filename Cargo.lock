@@ -519,6 +519,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "438a4e5f8e9aa246d6f3666d6978441bf1b37d5f417b50c4dd220be09f5fcc17"
 dependencies = [
  "arc-swap",
+ "combine",
+ "itoa",
+ "num-bigint",
+ "percent-encoding",
+ "ryu",
+ "sha1_smol",
+ "socket2",
+ "url",
+]
+
+[[package]]
+name = "redis"
+version = "0.31.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bc1ea653e0b2e097db3ebb5b7f678be339620b8041f66b30a308c1d45d36a7f"
+dependencies = [
  "bytes",
  "cfg-if",
  "combine",
@@ -542,7 +558,7 @@ name = "redis-macros"
 version = "0.5.3"
 dependencies = [
  "deadpool-redis",
- "redis 0.30.0",
+ "redis 0.31.0",
  "redis-macros-derive",
  "serde",
  "serde_json",
