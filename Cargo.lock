@@ -18,12 +18,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
-name = "arc-swap"
-version = "1.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69f7f8c3906b62b754cd5326047894316021dcfe5a194c8ea52bdd94934a3457"
-
-[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -89,12 +83,12 @@ dependencies = [
 
 [[package]]
 name = "deadpool-redis"
-version = "0.20.0"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c136f185b3ca9d1f4e4e19c11570e1002f4bfdd592d589053e225716d613851f"
+checksum = "b46e5b9e5b5e7d563ac3dfbf100d30139514961dc022fc44efbfbf7a8ee7dfce"
 dependencies = [
  "deadpool",
- "redis 0.29.5",
+ "redis",
 ]
 
 [[package]]
@@ -493,27 +487,6 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.29.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bc42f3a12fd4408ce64d8efef67048a924e543bd35c6591c0447fda9054695f"
-dependencies = [
- "arc-swap",
- "bytes",
- "combine",
- "futures-util",
- "itoa",
- "num-bigint",
- "percent-encoding",
- "pin-project-lite",
- "ryu",
- "socket2",
- "tokio",
- "tokio-util",
- "url",
-]
-
-[[package]]
-name = "redis"
 version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bc1ea653e0b2e097db3ebb5b7f678be339620b8041f66b30a308c1d45d36a7f"
@@ -541,7 +514,7 @@ name = "redis-macros"
 version = "0.5.4"
 dependencies = [
  "deadpool-redis",
- "redis 0.31.0",
+ "redis",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -555,7 +528,7 @@ version = "0.5.4"
 dependencies = [
  "proc-macro2",
  "quote",
- "redis 0.31.0",
+ "redis",
  "syn",
 ]
 
