@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update deadpool-redis to 0.21
+
 ## [0.5.4]
 
 ### Updated
