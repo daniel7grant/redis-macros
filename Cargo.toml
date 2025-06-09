@@ -11,7 +11,7 @@ license = "MIT"
 keywords = ["redis", "macro", "derive", "json"]
 
 [dependencies]
-redis = { version = "0.31.0", optional = true }
+redis = { version = "0.32.0", optional = true }
 redis-macros-derive = { version = "0.5", optional = true, path = "./redis-macros-derive" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
@@ -23,6 +23,6 @@ macros = ["dep:redis-macros-derive"]
 
 [dev-dependencies]
 deadpool-redis = "0.21"
-redis = { version = "0.31.0", features = ["tokio-comp", "json"] }
+redis = { version = "0.32.0", features = ["tokio-comp", "json"] }
 serde_yaml = "0.9"
 tokio = { version = "1.41", features = ["full"] }
