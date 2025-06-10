@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update dependencies to support Redis 0.32
 - Update deadpool-redis to 0.21
 
 ## [0.5.4]

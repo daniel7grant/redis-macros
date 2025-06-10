@@ -16,11 +16,11 @@ proc-macro = true
 [dependencies]
 proc-macro2 = "1.0"
 quote = "1.0"
-redis = "0.31.0"
+redis = "0.32.0"
 syn = { version = "2.0" }
 
 [dev-dependencies]
-redis = { version = "0.31.0", features = ["tokio-comp", "json"] }
+redis = { version = "0.32.0", features = ["tokio-comp", "json"] }
 redis-macros = { path = ".." }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
