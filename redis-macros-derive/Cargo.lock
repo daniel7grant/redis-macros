@@ -426,7 +426,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "redis",
  "redis-macros-derive",
@@ -436,7 +436,7 @@ dependencies = [
 
 [[package]]
 name = "redis-macros-derive"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "proc-macro2",
  "quote",
