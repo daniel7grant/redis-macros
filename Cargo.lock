@@ -83,12 +83,12 @@ dependencies = [
 
 [[package]]
 name = "deadpool-redis"
-version = "0.21.1"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "667d186d69c8b4dd7f8cf1ac71bec88b312e1752f2d1a63028aa9ea124c3f191"
+checksum = "c0965b977f1244bc3783bb27cd79cfcff335a8341da18f79232d00504b18eb1a"
 dependencies = [
  "deadpool",
- "redis 0.31.0",
+ "redis",
 ]
 
 [[package]]
@@ -487,27 +487,6 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.31.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bc1ea653e0b2e097db3ebb5b7f678be339620b8041f66b30a308c1d45d36a7f"
-dependencies = [
- "bytes",
- "cfg-if",
- "combine",
- "futures-util",
- "itoa",
- "num-bigint",
- "percent-encoding",
- "pin-project-lite",
- "ryu",
- "socket2",
- "tokio",
- "tokio-util",
- "url",
-]
-
-[[package]]
-name = "redis"
 version = "0.32.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd673deb3d184140109c1e27b043c2354cb79399c3ef304c365fc628092ed773"
@@ -535,7 +514,7 @@ name = "redis-macros"
 version = "0.5.5"
 dependencies = [
  "deadpool-redis",
- "redis 0.32.0",
+ "redis",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -549,7 +528,7 @@ version = "0.5.5"
 dependencies = [
  "proc-macro2",
  "quote",
- "redis 0.32.0",
+ "redis",
  "syn",
 ]
 
