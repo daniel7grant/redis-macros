@@ -70,18 +70,23 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let has_types = generics
-        .params
-        .iter()
-        .any(|g| matches!(g, GenericParam::Type(_)));
+    let mut where_clause_extended = where_clause.cloned();
 
-    let where_with_serialize = if let Some(w) = where_clause {
-        quote! { #w, #ident #ty_generics : serde::de::DeserializeOwned }
-    } else if has_types {
-        quote! { where #ident #ty_generics : serde::de::DeserializeOwned }
-    } else {
-        quote! {}
-    };
+    // Add serde constraints for each type parameter
+    for param in &generics.params {
+        if let GenericParam::Type(type_param) = param {
+            let ident = &type_param.ident;
+            let constraint = syn::parse_quote! { #ident : serde::de::DeserializeOwned };
+
+            if let Some(ref mut w) = where_clause_extended {
+                w.predicates.push(constraint);
+            } else {
+                where_clause_extended = Some(syn::parse_quote! { where #constraint });
+            }
+        }
+    }
+
+    let where_with_serialize = where_clause_extended.as_ref().map(|w| quote! { #w }).unwrap_or(quote! {});
 
     let failed_parse_error = quote! {
         Err(redis::RedisError::from((
@@ -201,18 +206,23 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
 
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let has_types = generics
-        .params
-        .iter()
-        .any(|g| matches!(g, GenericParam::Type(_)));
+    let mut where_clause_extended = where_clause.cloned();
 
-    let where_with_serialize = if let Some(w) = where_clause {
-        quote! { #w, #ident #ty_generics : serde::Serialize }
-    } else if has_types {
-        quote! { where #ident #ty_generics : serde::Serialize }
-    } else {
-        quote! {}
-    };
+    // Add serde constraints for each type parameter
+    for param in &generics.params {
+        if let GenericParam::Type(type_param) = param {
+            let ident = &type_param.ident;
+            let constraint = syn::parse_quote! { #ident : serde::Serialize };
+
+            if let Some(ref mut w) = where_clause_extended {
+                w.predicates.push(constraint);
+            } else {
+                where_clause_extended = Some(syn::parse_quote! { where #constraint });
+            }
+        }
+    }
+
+    let where_with_serialize = where_clause_extended.as_ref().map(|w| quote! { #w }).unwrap_or(quote! {});
 
     quote! {
         impl #impl_generics redis::ToRedisArgs for #ident #ty_generics #where_with_serialize {
