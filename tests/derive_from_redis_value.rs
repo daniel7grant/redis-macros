@@ -79,3 +79,21 @@ pub fn it_should_fail_if_input_is_missing() {
         panic!("UTF-8 parsing should fail.");
     }
 }
+
+#[derive(Debug, PartialEq, Deserialize, FromRedisValue)]
+struct Pair<K, V> {
+    key: K,
+    value: V,
+}
+
+#[test]
+pub fn it_should_deserialize_struct_with_multiple_generics() {
+    let expected = Pair {
+        key: 42u32,
+        value: "answer".to_string(),
+    };
+    let json = "{\"key\":42,\"value\":\"answer\"}";
+    let val = Value::BulkString(json.as_bytes().into());
+    let result = Pair::<u32, String>::from_redis_value(&val);
+    assert_eq!(result, Ok(expected));
+}
