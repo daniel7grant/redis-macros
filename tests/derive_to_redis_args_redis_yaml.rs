@@ -40,3 +40,23 @@ addresses:
             .as_bytes()
     );
 }
+
+#[derive(Debug, Serialize, ToRedisArgs)]
+#[redis_serializer(serde_yaml)]
+struct Pair<K, V> {
+    first: K,
+    second: V,
+}
+
+#[test]
+pub fn it_should_implement_to_redis_args_for_multiple_generics_with_yaml() {
+    let pair = Pair {
+        first: 100u8,
+        second: "data".to_string(),
+    };
+    let bytes = pair.to_redis_args();
+    assert_eq!(
+        std::str::from_utf8(&bytes[0]).unwrap(),
+        "first: 100\nsecond: data\n"
+    );
+}
