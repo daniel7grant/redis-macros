@@ -2,33 +2,42 @@
 
 ## [Unreleased]
 
+## [0.5.6] - 2025-07-20
+
+### Added
+
 - Add support for multiple generics (by @siennathesane)
+
+### Updated
+
 - Update dependencies
 
-## [0.5.5]
+## [0.5.5] - 2025-06-10
+
+### Updated
 
 - Update dependencies to support Redis 0.32
 - Update deadpool-redis to 0.21
 
-## [0.5.4]
+## [0.5.4] - 2025-05-16
 
 ### Updated
 
 - Update dependencies to support Redis 0.31
 
-## [0.5.3]
+## [0.5.3] - 2025-05-06
 
 ### Updated
 
 - Update dependencies to support Redis 0.30
 
-## [0.5.2]
+## [0.5.2] - 2025-03-02
 
 ### Updated
 
 - Update deadpool-redis and move to dev dependencies (by @negezor)
 
-## [0.5.1]
+## [0.5.1] - 2025-02-18
 
 ### Updated
 
