@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Add support for multiple generics (by @siennathesane)
+- Update dependencies
+
 ## [0.5.5]
 
 - Update dependencies to support Redis 0.32
