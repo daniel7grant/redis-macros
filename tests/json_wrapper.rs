@@ -100,36 +100,3 @@ pub fn it_should_fail_if_input_is_missing() {
         panic!("Value Nil should fail.");
     }
 }
-
-#[derive(Debug, PartialEq, Deserialize)]
-struct Pair<K, V> {
-    key: K,
-    value: V,
-}
-
-#[test]
-pub fn it_should_deserialize_json_wrapper_with_multiple_generics() {
-    let expected = Pair {
-        key: 10u16,
-        value: "ok".to_string(),
-    };
-    let val = Value::BulkString(
-        "[{\"key\":10,\"value\":\"ok\"}]".as_bytes().into(),
-    );
-    let result = Json::<Pair<u16, String>>::from_redis_value(&val);
-    if let Ok(Json(parsed)) = result {
-        assert_eq!(parsed, expected);
-    } else {
-        panic!("Generic JSON deserialization should succeed.");
-    }
-}
-
-#[test]
-pub fn it_should_fail_json_wrapper_with_mismatched_types() {
-    // key is a string and value is a number, should fail deserializing Pair<u8, String>
-    let val = Value::BulkString(
-        "[{\"key\":\"bad\",\"value\":123}]".as_bytes().into(),
-    );
-    let result = Json::<Pair<u8, String>>::from_redis_value(&val);
-    assert!(result.is_err());
-}

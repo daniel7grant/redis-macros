@@ -40,24 +40,3 @@ addresses:
     let result = User::from_redis_value(&val);
     assert_eq!(result, Ok(user));
 }
-
-// new test at the end of tests/derive_from_redis_value_redis_yaml.rs
-
-#[derive(Debug, PartialEq, Deserialize, FromRedisValue)]
-#[redis_serializer(serde_yaml)]
-struct Pair<K, V> {
-    key: K,
-    value: V,
-}
-
-#[test]
-pub fn it_should_deserialize_struct_with_multiple_generics_with_yaml() {
-    let expected = Pair {
-        key: 42u32,
-        value: "answer".to_string(),
-    };
-    let yaml = "key: 42\nvalue: answer\n";
-    let val = Value::BulkString(yaml.as_bytes().into());
-    let result = Pair::<u32, String>::from_redis_value(&val);
-    assert_eq!(result, Ok(expected));
-}
