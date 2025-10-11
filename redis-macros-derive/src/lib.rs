@@ -86,18 +86,17 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
         }
     }
 
-    let where_with_serialize = where_clause_extended.as_ref().map(|w| quote! { #w }).unwrap_or(quote! {});
+    let where_with_serialize = where_clause_extended
+        .as_ref()
+        .map(|w| quote! { #w })
+        .unwrap_or(quote! {});
 
     let failed_parse_error = quote! {
-        Err(redis::RedisError::from((
-            redis::ErrorKind::TypeError,
-            "Response was of incompatible type",
-            format!("Response type not deserializable to {} with {}. (response was {:?})", #ident_str, #serializer_str, v)
-        )))
+        Err(format!("Response type not deserializable to {} with {}. (response was {:?})", #ident_str, #serializer_str, v).into())
     };
 
     // If the parsing failed, the issue might simply be that the user is using a RedisJSON command
-    // RedisJSON commands wrap the response into square brackets for some godforesaken reason
+    // RedisJSON commands wrap the response into square brackets for some godforsaken reason
     // We can try removing the brackets and try the parse again
     let redis_json_hack = quote! {
         let mut ch = s.chars();
@@ -105,11 +104,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
             if let Ok(s) = #serializer::from_str(ch.as_str()) {
                 Ok(s)
             } else {
-                Err(redis::RedisError::from((
-                redis::ErrorKind::TypeError,
-                "Response was of incompatible type",
-                format!("Response type not RedisJSON deserializable to {}. (response was {:?})", #ident_str, v)
-            )))
+                Err(format!("Response type not RedisJSON deserializable to {}. (response was {:?})", #ident_str, v).into())
             }
         } else {
             #failed_parse_error
@@ -125,8 +120,8 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 
     quote! {
         impl #impl_generics redis::FromRedisValue for #ident #ty_generics #where_with_serialize {
-            fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
-                match *v {
+            fn from_redis_value(v: redis::Value) -> Result<Self, redis::ParsingError> {
+                match v {
                     redis::Value::BulkString(ref bytes) => {
                         if let Ok(s) = std::str::from_utf8(bytes) {
                             if let Ok(s) = #serializer::from_str(s) {
@@ -135,18 +130,10 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
                                 #failed_parse
                             }
                         } else {
-                            Err(redis::RedisError::from((
-                                redis::ErrorKind::TypeError,
-                                "Response was of incompatible type",
-                                format!("Response was not valid UTF-8 string. (response was {:?})", v)
-                            )))
+                            Err(format!("Response was not valid UTF-8 string. (response was {:?})", v).into())
                         }
                     },
-                    _ => Err(redis::RedisError::from((
-                        redis::ErrorKind::TypeError,
-                        "Response was of incompatible type",
-                        format!("Response type was not deserializable to {}. (response was {:?})", #ident_str, v)
-                    ))),
+                    _ => Err(format!("Response type was not deserializable to {}. (response was {:?})", #ident_str, v).into()),
                 }
             }
         }
@@ -222,7 +209,10 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
         }
     }
 
-    let where_with_serialize = where_clause_extended.as_ref().map(|w| quote! { #w }).unwrap_or(quote! {});
+    let where_with_serialize = where_clause_extended
+        .as_ref()
+        .map(|w| quote! { #w })
+        .unwrap_or(quote! {});
 
     quote! {
         impl #impl_generics redis::ToRedisArgs for #ident #ty_generics #where_with_serialize {
@@ -234,6 +224,8 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
                 out.write_arg(&buf.as_bytes())
             }
         }
+
+        impl #impl_generics redis::ToSingleRedisArg for #ident #ty_generics #where_with_serialize {}
     }
     .into()
 }

@@ -19,7 +19,7 @@ pub fn it_should_deserialize_struct_with_multiple_generics() {
     assert_eq!(bytes[0], json);
 
     let val = Value::BulkString(json.into());
-    let result = Pair::<u32, String>::from_redis_value(&val);
+    let result = Pair::<u32, String>::from_redis_value(val);
     assert_eq!(result, Ok(pair));
 }
 
@@ -36,7 +36,7 @@ pub fn it_should_deserialize_json_wrapper_with_multiple_generics() {
         value: "ok".to_string(),
     };
     let val = Value::BulkString("[{\"key\":10,\"value\":\"ok\"}]".as_bytes().into());
-    let result = Json::<PairWithoutTrait<u16, String>>::from_redis_value(&val);
+    let result = Json::<PairWithoutTrait<u16, String>>::from_redis_value(val);
     if let Ok(Json(parsed)) = result {
         assert_eq!(parsed, expected);
     } else {

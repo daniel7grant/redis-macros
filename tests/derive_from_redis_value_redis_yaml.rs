@@ -37,6 +37,6 @@ addresses:
         .as_bytes()
         .into(),
     );
-    let result = User::from_redis_value(&val);
+    let result = User::from_redis_value(val);
     assert_eq!(result, Ok(user));
 }
