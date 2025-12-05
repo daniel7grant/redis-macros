@@ -1,7 +1,7 @@
 [package]
 name = "redis-macros-derive"
 description = "Derive macros for the redis-macros package"
-version = "1.0.0-rc.1"
+version = "1.0.0"
 edition = "2021"
 authors = ["Daniel Grant"]
 readme = "README.md"
