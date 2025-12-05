@@ -12,6 +12,7 @@
     - Change `FromRedisValue` to accept owned types (see [More efficient deserialization](https://github.com/redis-rs/redis-rs/blob/redis-1.0.0/version1.md#more-efficient-deserialization-breaking-change))
     - Change `FromRedisValue` error from `RedisError` to `ParsingError` ([Better error messages](https://github.com/redis-rs/redis-rs/blob/redis-1.0.0/version1.md#better-error-messages-potentially-breaking))
 - Update other dependencies
+- Fix the code comments to pass on nightly
 
 ## [0.5.6] - 2025-07-20
 
