@@ -40,7 +40,7 @@
 //!     };
 //!
 //!     // Just use it as you would a primitive
-//!     con.set("user", user)?;
+//!     let _: () = con.set("user", user)?;
 //!     // user and stored_user will be the same
 //!     let stored_user: User = con.get("user")?;
 //!     # Ok(())
@@ -68,7 +68,7 @@
 //! # let mut con = client.get_connection()?;
 //! # let user = User { id: 1, name: "Ziggy".to_string(), addresses: vec![ Address::Street("Downing".to_string()), Address::Road("Abbey".to_string()) ] };
 //! // Simple usage is equivalent to set-get
-//! con.json_set("user", "$", &user)?;
+//! let _: () = con.json_set("user", "$", &user)?;
 //! let stored_user: User = con.json_get("user", "$")?;
 //!
 //! // But you can get deep values - don't forget to derive traits for these too!
@@ -92,7 +92,7 @@
 //! # let client = redis::Client::open("redis://localhost:6379/")?;
 //! # let mut con = client.get_connection()?;
 //! # let user = User { id: 1, name: "Ziggy".to_string(), addresses: vec![ Address::Street("Downing".to_string()), Address::Road("Abbey".to_string()) ] };
-//! # con.json_set("user", "$", &user)?;
+//! # let _: () = con.json_set("user", "$", &user)?;
 //! // This WON'T work
 //! let stored_addresses: Vec<Address> = con.json_get("user", "$.addresses")?;
 //! # Ok(())
@@ -118,7 +118,7 @@
 //! # let client = redis::Client::open("redis://localhost:6379/")?;
 //! # let mut con = client.get_connection()?;
 //! # let user = User { id: 1, name: "Ziggy".to_string(), addresses: vec![ Address::Street("Downing".to_string()), Address::Road("Abbey".to_string()) ] };
-//! # con.json_set("user", "$", &user)?;
+//! # let _: () = con.json_set("user", "$", &user)?;
 
 //! // Return type can be wrapped into Json
 //! let Json(stored_name): Json<String> = con.json_get("user", "$.name")?;
@@ -145,10 +145,10 @@
 //! # let client = redis::Client::open("redis://localhost:6379/")?;
 //! # let mut con = client.get_connection()?;
 //! # let user = User {};
-//! # con.json_set("user", "$", &user)?;
+//! # let _: () = con.json_set("user", "$", &user)?;
 //!
 //! // This works with simple redis-rs
-//! con.json_set("user", "$", &user)?;
+//! let _: () = con.json_set("user", "$", &user)?;
 //! // ...and you can get back with Json wrapper
 //! let Json(stored_user): Json<User> = con.json_get("user", "$")?;
 //! # Ok(())
