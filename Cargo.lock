@@ -3,6 +3,12 @@
 version = 4
 
 [[package]]
+name = "arcstr"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03918c3dbd7701a85c6b9887732e2921175f26c350b4563841d0958c21d57e6d"
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -59,7 +65,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0965b977f1244bc3783bb27cd79cfcff335a8341da18f79232d00504b18eb1a"
 dependencies = [
  "deadpool",
- "redis",
+ "redis 0.32.7",
 ]
 
 [[package]]
@@ -424,9 +430,6 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "ryu",
- "serde",
- "serde_json",
- "sha1_smol",
  "socket2",
  "tokio",
  "tokio-util",
@@ -434,11 +437,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "redis"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47ba378d39b8053bffbfc2750220f5a24a06189b5129523d5db01618774e0239"
+dependencies = [
+ "arcstr",
+ "bytes",
+ "cfg-if",
+ "combine",
+ "futures-util",
+ "itoa",
+ "num-bigint",
+ "percent-encoding",
+ "pin-project-lite",
+ "ryu",
+ "serde",
+ "serde_json",
+ "sha1_smol",
+ "socket2",
+ "tokio",
+ "tokio-util",
+ "url",
+ "xxhash-rust",
+]
+
+[[package]]
 name = "redis-macros"
-version = "0.5.6"
+version = "1.0.0"
 dependencies = [
  "deadpool-redis",
- "redis",
+ "redis 1.0.0",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -448,11 +477,11 @@ dependencies = [
 
 [[package]]
 name = "redis-macros-derive"
-version = "0.5.6"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
- "redis",
+ "redis 1.0.0",
  "syn",
 ]
 
@@ -779,6 +808,12 @@ name = "writeable"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9edde0db4769d2dc68579893f2306b26c6ecfbe0ef499b013d731b7b9247e0b9"
+
+[[package]]
+name = "xxhash-rust"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
 
 [[package]]
 name = "yoke"
