@@ -508,9 +508,9 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "1.0.0-rc.1"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92eee65955fc9d44e8efda17dd3794b7cf1e9dd96f39b805ae551111f4b77ce2"
+checksum = "47ba378d39b8053bffbfc2750220f5a24a06189b5129523d5db01618774e0239"
 dependencies = [
  "arcstr",
  "bytes",
@@ -529,14 +529,15 @@ dependencies = [
  "tokio",
  "tokio-util",
  "url",
+ "xxhash-rust",
 ]
 
 [[package]]
 name = "redis-macros"
-version = "1.0.0-rc.0"
+version = "1.0.0"
 dependencies = [
  "deadpool-redis",
- "redis 1.0.0-rc.1",
+ "redis 1.0.0",
  "redis-macros-derive",
  "serde",
  "serde_json",
@@ -546,11 +547,11 @@ dependencies = [
 
 [[package]]
 name = "redis-macros-derive"
-version = "1.0.0-rc.0"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
- "redis 1.0.0-rc.1",
+ "redis 1.0.0",
  "syn",
 ]
 
@@ -876,6 +877,12 @@ name = "writeable"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea2f10b9bb0928dfb1b42b65e1f9e36f7f54dbdf08457afefb38afcdec4fa2bb"
+
+[[package]]
+name = "xxhash-rust"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
 
 [[package]]
 name = "yoke"
