@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Updated
+
+- Refactor macros to only use fully qualified names (except Redis, for compatibility with deadpool-redis, etc)
+
 ## [1.0.0]
 
 ### Updated

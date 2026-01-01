@@ -76,7 +76,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     for param in &generics.params {
         if let GenericParam::Type(type_param) = param {
             let ident = &type_param.ident;
-            let constraint = syn::parse_quote! { #ident : serde::de::DeserializeOwned };
+            let constraint = syn::parse_quote! { #ident : ::serde::de::DeserializeOwned };
 
             if let Some(ref mut w) = where_clause_extended {
                 w.predicates.push(constraint);
@@ -120,10 +120,10 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
 
     quote! {
         impl #impl_generics redis::FromRedisValue for #ident #ty_generics #where_with_serialize {
-            fn from_redis_value(v: redis::Value) -> Result<Self, redis::ParsingError> {
+            fn from_redis_value(v: redis::Value) -> ::std::result::Result<Self, redis::ParsingError> {
                 match v {
                     redis::Value::BulkString(ref bytes) => {
-                        if let Ok(s) = std::str::from_utf8(bytes) {
+                        if let Ok(s) = ::std::str::from_utf8(bytes) {
                             if let Ok(s) = #serializer::from_str(s) {
                                 Ok(s)
                             } else {
@@ -199,7 +199,7 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
     for param in &generics.params {
         if let GenericParam::Type(type_param) = param {
             let ident = &type_param.ident;
-            let constraint = syn::parse_quote! { #ident : serde::Serialize };
+            let constraint = syn::parse_quote! { #ident : ::serde::Serialize };
 
             if let Some(ref mut w) = where_clause_extended {
                 w.predicates.push(constraint);
@@ -218,7 +218,7 @@ pub fn to_redis_args_macro(input: TokenStream) -> TokenStream {
         impl #impl_generics redis::ToRedisArgs for #ident #ty_generics #where_with_serialize {
             fn write_redis_args<W>(&self, out: &mut W)
             where
-                W: ?Sized + redis::RedisWrite,
+                W: ?::std::marker::Sized + redis::RedisWrite,
             {
                 let buf = #serializer::to_string(&self).unwrap();
                 out.write_arg(&buf.as_bytes())
