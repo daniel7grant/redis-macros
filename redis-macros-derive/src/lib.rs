@@ -92,7 +92,7 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
         .unwrap_or(quote! {});
 
     let failed_parse_error = quote! {
-        Err(format!("Response type not deserializable to {} with {}. (response was {:?})", #ident_str, #serializer_str, v).into())
+        ::std::result::Result::Err(::std::format!("Response type not deserializable to {} with {}. (response was {:?})", #ident_str, #serializer_str, v).into())
     };
 
     // If the parsing failed, the issue might simply be that the user is using a RedisJSON command
@@ -100,11 +100,11 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
     // We can try removing the brackets and try the parse again
     let redis_json_hack = quote! {
         let mut ch = s.chars();
-        if ch.next() == Some('[') && ch.next_back() == Some(']') {
-            if let Ok(s) = #serializer::from_str(ch.as_str()) {
-                Ok(s)
+        if ch.next() == ::std::option::Option::Some('[') && ch.next_back() == ::std::option::Option::Some(']') {
+            if let ::std::result::Result::Ok(s) = #serializer::from_str(ch.as_str()) {
+                ::std::result::Result::Ok(s)
             } else {
-                Err(format!("Response type not RedisJSON deserializable to {}. (response was {:?})", #ident_str, v).into())
+                ::std::result::Result::Err(::std::format!("Response type not RedisJSON deserializable to {}. (response was {:?})", #ident_str, v).into())
             }
         } else {
             #failed_parse_error
@@ -123,17 +123,17 @@ pub fn from_redis_value_macro(input: TokenStream) -> TokenStream {
             fn from_redis_value(v: redis::Value) -> ::std::result::Result<Self, redis::ParsingError> {
                 match v {
                     redis::Value::BulkString(ref bytes) => {
-                        if let Ok(s) = ::std::str::from_utf8(bytes) {
-                            if let Ok(s) = #serializer::from_str(s) {
-                                Ok(s)
+                        if let ::std::result::Result::Ok(s) = ::std::str::from_utf8(bytes) {
+                            if let ::std::result::Result::Ok(s) = #serializer::from_str(s) {
+                                ::std::result::Result::Ok(s)
                             } else {
                                 #failed_parse
                             }
                         } else {
-                            Err(format!("Response was not valid UTF-8 string. (response was {:?})", v).into())
+                            ::std::result::Result::Err(::std::format!("Response was not valid UTF-8 string. (response was {:?})", v).into())
                         }
                     },
-                    _ => Err(format!("Response type was not deserializable to {}. (response was {:?})", #ident_str, v).into()),
+                    _ => ::std::result::Result::Err(::std::format!("Response type was not deserializable to {}. (response was {:?})", #ident_str, v).into()),
                 }
             }
         }
