@@ -37,6 +37,6 @@ addresses:
 - !Street Downing
 - !Road Abbey
 "
-            .as_bytes()
+        .as_bytes()
     );
 }

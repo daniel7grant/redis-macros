@@ -182,13 +182,13 @@ mod json;
 pub use json::Json;
 
 /// Derive macro for the redis crate's [`FromRedisValue`](../redis/trait.FromRedisValue.html) trait to allow parsing Redis responses to this type.
-/// 
+///
 /// For more information see the `redis_macros_derive` crate: [`FromRedisValue`](../redis_macros_derive/derive.FromRedisValue.html)
 #[cfg(feature = "macros")]
 pub use redis_macros_derive::FromRedisValue;
 
 /// Derive macro for the redis crate's [`ToRedisArgs`](../redis/trait.ToRedisArgs.html) trait to allow passing the type to Redis commands.
-/// 
+///
 /// For more information see the `redis_macros_derive` crate: [`ToRedisArgs`](../redis_macros_derive/derive.FromRedisValue.html)
 #[cfg(feature = "macros")]
 pub use redis_macros_derive::ToRedisArgs;

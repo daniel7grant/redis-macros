@@ -22,12 +22,15 @@ struct User {
 async fn main() -> RedisResult<()> {
     // Open new connection to localhost
     let client = Client::open("redis://localhost:6379")?;
-    let mut con = client.get_multiplexed_async_connection().await.map_err(|_| {
-        RedisError::from((
+    let mut con = client
+        .get_multiplexed_async_connection()
+        .await
+        .map_err(|_| {
+            RedisError::from((
             ErrorKind::InvalidClientConfig,
             "Cannot connect to localhost:6379. Try starting a redis-server process or container.",
         ))
-    })?;
+        })?;
 
     // Define the data you want to store in Redis.
     let user = User {
@@ -61,7 +64,6 @@ async fn main() -> RedisResult<()> {
     let _: () = con.json_set("users_wrapped", "$", &users).await?;
     let Json(stored_users): Json<Vec<User>> = con.json_get("users_wrapped", "$").await?;
     assert_eq!(users, stored_users);
-
 
     Ok(())
 }

@@ -21,12 +21,15 @@ struct User {
 async fn main() -> RedisResult<()> {
     // Open new connection to localhost
     let client = Client::open("redis://localhost:6379")?;
-    let mut con = client.get_multiplexed_async_connection().await.map_err(|_| {
-        RedisError::from((
+    let mut con = client
+        .get_multiplexed_async_connection()
+        .await
+        .map_err(|_| {
+            RedisError::from((
             ErrorKind::InvalidClientConfig,
             "Cannot connect to localhost:6379. Try starting a redis-server process or container.",
         ))
-    })?;
+        })?;
 
     // Define the data you want to store in Redis.
     let user = User {
@@ -42,24 +45,27 @@ async fn main() -> RedisResult<()> {
     let _: () = con.json_set("user_wrapped_modify", "$", &user).await?;
 
     // Modify inner values with JSON.SET
-    let _: () = con.json_set("user_wrapped_modify", "$.name", &"Bowie")
+    let _: () = con
+        .json_set("user_wrapped_modify", "$.name", &"Bowie")
         .await?;
     let Json(stored_name): Json<String> = con.json_get("user_wrapped_modify", "$.name").await?;
     assert_eq!("Bowie", stored_name);
 
     // Increment numbers with JSON.NUMINCRBY
-    let _: () = con.json_num_incr_by("user_wrapped_modify", "$.id", 1)
+    let _: () = con
+        .json_num_incr_by("user_wrapped_modify", "$.id", 1)
         .await?;
     let Json(stored_id): Json<u32> = con.json_get("user_wrapped_modify", "$.id").await?;
     assert_eq!(2, stored_id);
 
     // Append item to array with JSON.ARR_APPEND
-    let _: () = con.json_arr_append(
-        "user_wrapped_modify",
-        "$.addresses",
-        &Address::Street("Oxford".to_string()),
-    )
-    .await?;
+    let _: () = con
+        .json_arr_append(
+            "user_wrapped_modify",
+            "$.addresses",
+            &Address::Street("Oxford".to_string()),
+        )
+        .await?;
     let Json(stored_addresses): Json<Vec<Address>> =
         con.json_get("user_wrapped_modify", "$.addresses").await?;
     assert_eq!(

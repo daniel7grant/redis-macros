@@ -58,15 +58,25 @@ where
 {
     fn from_redis_value(v: Value) -> Result<Json<T>, ParsingError> {
         let Value::BulkString(bytes) = &v else {
-            return Err(format!("Response type in JSON was not deserializable. (response was {v:?})").into());
+            return Err(format!(
+                "Response type in JSON was not deserializable. (response was {v:?})"
+            )
+            .into());
         };
 
-        let s = ::std::str::from_utf8(bytes).map_err(|e| format!("Response type in JSON is invalid UTF-8: {e}. (response was {v:?})"))?;
+        let s = ::std::str::from_utf8(bytes).map_err(|e| {
+            format!("Response type in JSON is invalid UTF-8: {e}. (response was {v:?})")
+        })?;
         let mut ch = s.chars();
         if !(ch.next() == Some('[') && ch.next_back() == Some(']')) {
-            return Err(format!("Response type in JSON was not deserializable. (response was {v:?})").into());
+            return Err(format!(
+                "Response type in JSON was not deserializable. (response was {v:?})"
+            )
+            .into());
         }
-        let deser = serde_json::from_str(ch.as_str()).map_err(|e| format!("Response type in JSON could not be deserialized: {e} (response was {v:?})"))?;
+        let deser = serde_json::from_str(ch.as_str()).map_err(|e| {
+            format!("Response type in JSON could not be deserialized: {e} (response was {v:?})")
+        })?;
         Ok(Json(deser))
     }
 }

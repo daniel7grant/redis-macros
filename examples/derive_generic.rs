@@ -21,7 +21,7 @@ fn main() -> RedisResult<()> {
     })?;
 
     // Define the data you want to store in Redis.
-	// Currently only owned types work (String, but not &str)!
+    // Currently only owned types work (String, but not &str)!
     let container = Container {
         inner: "contained".to_string(),
     };
