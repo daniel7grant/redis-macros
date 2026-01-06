@@ -57,7 +57,7 @@ where
     T: DeserializeOwned,
 {
     fn from_redis_value(v: Value) -> Result<Json<T>, ParsingError> {
-        let Value::BulkString(ref bytes) = v else {
+        let Value::BulkString(bytes) = &v else {
             return Err(format!("Response type in JSON was not deserializable. (response was {v:?})").into());
         };
 
