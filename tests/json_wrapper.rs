@@ -61,46 +61,34 @@ pub fn it_should_fail_if_the_result_is_not_redis_json() {
     // RedisJSON responses should have wrapping brackets (i.e. [{...}])
     let val = Value::BulkString("{\"id\":1,\"name\":\"Ziggy\",\"addresses\":[{\"Street\":\"Downing\"},{\"Road\":\"Abbey\"}]}".as_bytes().into());
     let result = Json::<User>::from_redis_value(val);
-    if let Err(err) = result {
-        assert_eq!(err.to_string(), "Incompatible type - Response type was not JSON type. (response was bulk-string('\"{\\\"id\\\":1,\\\"name\\\":\\\"Ziggy\\\",\\\"addresses\\\":[{\\\"Street\\\":\\\"Downing\\\"},{\\\"Road\\\":\\\"Abbey\\\"}]}\"'))".to_string());
-    } else {
-        panic!("RedisJSON unwrapping should fail.");
-    }
+    let err = result.unwrap_err();
+    assert_eq!(err.to_string(), "Incompatible type - Response type in JSON was not deserializable. (response was bulk-string('\"{\\\"id\\\":1,\\\"name\\\":\\\"Ziggy\\\",\\\"addresses\\\":[{\\\"Street\\\":\\\"Downing\\\"},{\\\"Road\\\":\\\"Abbey\\\"}]}\"'))".to_string());
 }
 
 #[test]
 pub fn it_should_fail_if_input_is_not_compatible_with_type() {
     let val = Value::BulkString("[{}]".as_bytes().into());
     let result = Json::<User>::from_redis_value(val);
-    if let Err(err) = result {
-        assert_eq!(err.to_string(), "Incompatible type - Response type in JSON was not deserializable. (response was bulk-string('\"[{}]\"'))".to_string());
-    } else {
-        panic!("Deserialization should fail.");
-    }
+    let err = result.unwrap_err();
+    assert_eq!(err.to_string(), "Incompatible type - Response type in JSON could not be deserialized: missing field `id` at line 1 column 2 (response was bulk-string('\"[{}]\"'))".to_string());
 }
 
 #[test]
 pub fn it_should_fail_if_input_is_not_valid_utf8() {
     let val = Value::BulkString(vec![0, 159, 146, 150]); // Some invalid utf8
     let result = Json::<User>::from_redis_value(val);
-    if let Err(err) = result {
-        assert_eq!(err.to_string(), "Incompatible type - Response was not valid UTF-8 string. (response was binary-data([0, 159, 146, 150]))".to_string());
-    } else {
-        panic!("UTF-8 parsing should fail.");
-    }
+    let err = result.unwrap_err();
+    assert_eq!(err.to_string(), "Incompatible type - Response type in JSON is invalid UTF-8: invalid utf-8 sequence of 1 bytes from index 1. (response was binary-data([0, 159, 146, 150]))".to_string());
 }
 
 #[test]
 pub fn it_should_fail_if_input_is_missing() {
     let val = Value::Nil;
     let result = Json::<User>::from_redis_value(val);
-    if let Err(err) = result {
-        assert_eq!(
-            err.to_string(),
-            "Incompatible type - Response type not RedisJSON deserializable. (response was nil)"
-                .to_string()
-        );
-    } else {
-        panic!("Value Nil should fail.");
-    }
+    let err = result.unwrap_err();
+    assert_eq!(
+        err.to_string(),
+        "Incompatible type - Response type in JSON was not deserializable. (response was nil)"
+            .to_string()
+    );
 }

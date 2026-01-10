@@ -31,7 +31,7 @@ use serde::de::DeserializeOwned;
 /// # use serde::{Deserialize, Serialize};
 /// #[derive(Serialize, Deserialize)]
 /// struct User { id: u32 }
-///  
+///
 /// # fn main () -> redis::RedisResult<()> {
 /// # let client = redis::Client::open("redis://localhost:6379/")?;
 /// # let mut con = client.get_connection()?;
@@ -45,7 +45,7 @@ use serde::de::DeserializeOwned;
 /// This command is designed to use RedisJSON commands. You could probably use this type
 /// to parse normal command outputs, but it removes the first and last character
 /// so it is not recommended.
-///  
+///
 #[derive(Debug)]
 pub struct Json<T>(
     /// The inner type to deserialize
@@ -57,26 +57,26 @@ where
     T: DeserializeOwned,
 {
     fn from_redis_value(v: Value) -> Result<Json<T>, ParsingError> {
-        match v {
-            Value::BulkString(ref bytes) => {
-                if let Ok(s) = ::std::str::from_utf8(bytes) {
-                    let mut ch = s.chars();
-                    if ch.next() == Some('[') && ch.next_back() == Some(']') {
-                        if let Ok(t) = serde_json::from_str(ch.as_str()) {
-                            Ok(Json(t))
-                        } else {
-                            Err(format!("Response type in JSON was not deserializable. (response was {v:?})").into())
-                        }
-                    } else {
-                        Err(format!("Response type was not JSON type. (response was {v:?})").into())
-                    }
-                } else {
-                    Err(format!("Response was not valid UTF-8 string. (response was {v:?})").into())
-                }
-            }
-            _ => Err(
-                format!("Response type not RedisJSON deserializable. (response was {v:?})").into(),
-            ),
+        let Value::BulkString(bytes) = &v else {
+            return Err(format!(
+                "Response type in JSON was not deserializable. (response was {v:?})"
+            )
+            .into());
+        };
+
+        let s = ::std::str::from_utf8(bytes).map_err(|e| {
+            format!("Response type in JSON is invalid UTF-8: {e}. (response was {v:?})")
+        })?;
+        let mut ch = s.chars();
+        if !(ch.next() == Some('[') && ch.next_back() == Some(']')) {
+            return Err(format!(
+                "Response type in JSON was not deserializable. (response was {v:?})"
+            )
+            .into());
         }
+        let deser = serde_json::from_str(ch.as_str()).map_err(|e| {
+            format!("Response type in JSON could not be deserialized: {e} (response was {v:?})")
+        })?;
+        Ok(Json(deser))
     }
 }

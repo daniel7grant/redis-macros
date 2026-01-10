@@ -1,5 +1,5 @@
-use redis::{Client, JsonAsyncCommands, ErrorKind, RedisError, RedisResult};
-use redis_macros::{FromRedisValue, ToRedisArgs, Json};
+use redis::{Client, ErrorKind, JsonAsyncCommands, RedisError, RedisResult};
+use redis_macros::{FromRedisValue, Json, ToRedisArgs};
 use serde::{Deserialize, Serialize};
 
 /// Define structs to hold the data
@@ -24,12 +24,15 @@ struct User {
 async fn main() -> RedisResult<()> {
     // Open new connection to localhost
     let client = Client::open("redis://localhost:6379")?;
-    let mut con = client.get_multiplexed_async_connection().await.map_err(|_| {
-        RedisError::from((
+    let mut con = client
+        .get_multiplexed_async_connection()
+        .await
+        .map_err(|_| {
+            RedisError::from((
             ErrorKind::InvalidClientConfig,
             "Cannot connect to localhost:6379. Try starting a redis-server process or container.",
         ))
-    })?;
+        })?;
 
     // Define the data you want to store in Redis.
     let user = User {
@@ -54,7 +57,8 @@ async fn main() -> RedisResult<()> {
     // You have to wrap them in Json instead
     let Json(stored_name): Json<String> = con.json_get("user_json", "$.name").await?;
     assert_eq!(user.name, stored_name);
-    let Json(stored_addresses): Json<Vec<Address>> = con.json_get("user_json", "$.addresses").await?;
+    let Json(stored_addresses): Json<Vec<Address>> =
+        con.json_get("user_json", "$.addresses").await?;
     assert_eq!(user.addresses, stored_addresses);
 
     Ok(())
