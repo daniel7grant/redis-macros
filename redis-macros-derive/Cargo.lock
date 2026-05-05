@@ -372,9 +372,9 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "1.1.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d76e41a79ae5cbb41257d84cf4cf0db0bb5a95b11bf05c62c351de4fe748620d"
+checksum = "72d32a1ac9123f0d84fda64bfc02a271d9868483162dd2d9099b5c362ece064c"
 dependencies = [
  "arcstr",
  "async-lock",
@@ -398,12 +398,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "redis-macros"
+version = "1.0.1"
+dependencies = [
+ "redis",
+ "redis-macros-derive",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "redis-macros-derive"
 version = "1.0.1"
 dependencies = [
  "proc-macro2",
  "quote",
  "redis",
+ "redis-macros",
  "serde",
  "serde_json",
  "serde_yaml",
