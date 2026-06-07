@@ -4,7 +4,7 @@
 
 ### Updated
 
--   Update Redis to 1.2.0
+-   Update Redis to 1.2.2
 -   Update dependecies
 
 ## [1.0.1] - 2026-01-10
